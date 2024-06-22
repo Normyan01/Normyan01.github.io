@@ -8,7 +8,6 @@
 ### [点击此处](https://normyan01.github.io/cp) 一些有趣的
 ### [点击此处](https://normyan01.github.io/wp) 网盘
 
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -24,7 +23,8 @@
             margin: 0;
         }
         #container {
-            text-align: center;
+            text-align: left;
+            width: 80%;
         }
     </style>
 </head>
@@ -53,3 +53,4 @@
     </script>
 </body>
 </html>
+
