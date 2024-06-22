@@ -5,6 +5,24 @@
 #### 声明：因保证不侵犯他人隐私权本文用字母代替人名                                                            
 [返回主页](https://normyan01.github.io)
 ### 女1*Z* 闺蜜（女2）*H* 男1*L* 女主闺蜜*H* 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自动显示文本</title>
+    <script>
+        function checkInput() {
+            var inputField = document.getElementById('inputField');
+            if (inputField.value === 'j1012100809') {
+                inputField.value = '马上更新';
+            }
+        }
+    </script>
+</head>
+<body>
+    <input type="text" id="inputField" oninput="checkInput()">
+</body>
+</html>
 ＜!--
 
 ## 附：
