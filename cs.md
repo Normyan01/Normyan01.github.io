@@ -3,17 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>自动显示文本</title>
-    <script>
-        function checkInput() {
-            var inputField = document.getElementById('inputField');
-            if (inputField.value === '123') {
-                inputField.value = '456';
-            }
+    <title>Text Box Change Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
-    </script>
+        #container {
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-    <input type="text" id="inputField" oninput="checkInput()">
+    <div id="container">
+        <input type="text" id="textBox" placeholder="Enter '123'">
+    </div>
+
+    <script>
+        document.getElementById('textBox').addEventListener('input', function() {
+            if (this.value === '123') {
+                let container = document.getElementById('container');
+                container.innerHTML = '<input type="text" value="456" readonly>';
+            }
+        });
+    </script>
 </body>
 </html>
+
