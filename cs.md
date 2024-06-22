@@ -20,7 +20,7 @@
 </head>
 <body>
     <div id="container">
-        <input type="text" id="textBox" placeholder="Enter '123'">
+        <input type="text" id="textBox">
     </div>
 
     <script>
@@ -33,4 +33,3 @@
     </script>
 </body>
 </html>
-
