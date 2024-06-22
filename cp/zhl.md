@@ -9,22 +9,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>自动显示文本</title>
-    <script>
-        function checkInput() {
-            var inputField = document.getElementById('inputField');
-            if (inputField.value === 'j1012100809') {
-                inputField.value = '马上更新';
-            }
+    <title>Text Box Change Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
-    </script>
+        #container {
+            text-align: center;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+        }
+    </style>
 </head>
 <body>
-    <input type="text" id="inputField" oninput="checkInput()">
+    <div id="container">
+        <input type="text" id="textBox">
+    </div>
+
+    <script>
+        document.getElementById('textBox').addEventListener('input', function() {
+            if (this.value === 'j1012100809') {
+                let container = document.getElementById('container');
+                container.innerHTML = `
+                    <textarea readonly>
+正式承认（公开）于：2024.6.11 12:17左右
+2024.6.12 H不承认，找各种离谱借口
+2024.6.13 三人一起互动2次
+2024.6.14 根据某同学的推算（数学），证实他们三个人喜欢程度平衡
+2024.6.17 物理课上L被连累一起站着，ZH笑 三个人一起说话3次
+2024.6.18 英语一道题 他们三个一起错，说话一次
+                    </textarea>
+                `;
+            }
+        });
+    </script>
 </body>
 </html>
-＜!--
-
 ## 附：
 ### 本文仅记录三人一起的事
 ### [点击此处](https://normyan01.github.io/cp/zhl/zl)查看Z和L
@@ -37,6 +64,4 @@
 ### 2024.6.14 根据某同学的推算（数学），证实他们三个人喜欢程度平衡
 ### 2024.6.17 物理课上*L*被连累一起站着，*ZH*笑 三个人一起说话3次
 ### 2024.6.18 英语一道题 他们三个一起错，说话一次 
-
--->!
 
