@@ -4,85 +4,94 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Random Number Generator</title>
-    <style>
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 50px;
-        }
-        .row {
-            display: flex;
-            justify-content: center;
-            margin: 10px 0;
-        }
-        input {
-            width: 100px;
-            margin-right: 10px;
-            text-align: center;
-        }
-        button {
-            background-color: black;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            cursor: pointer;
-        }
-        .success, .attempts {
-            margin-top: 20px;
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-<div class="container">
-    <div class="row">
-        <input type="text" id="textbox1" readonly>
-        <input type="text" id="textbox2" readonly>
+    <div class="container">
+        <input type="text" id="num1" readonly>
+        <input type="text" id="num2" readonly>
+        <button id="generateButton">生成</button>
+        <input type="text" id="attempts" readonly value="已尝试0次">
+        <input type="text" id="successMessage" readonly hidden value="成功">
     </div>
-    <div class="row">
-        <button id="generateBtn">生成</button>
-    </div>
-    <div id="messageContainer"></div>
-</div>
-
-<script>
-    let attemptCount = 0;
-
-    document.getElementById('generateBtn').addEventListener('click', function() {
-        attemptCount++;
-
-        const randomNumber1 = Math.floor(Math.random() * 16) + 1;
-        const randomNumber2 = Math.floor(Math.random() * 24) + 17;
-
-        const textbox1 = document.getElementById('textbox1');
-        const textbox2 = document.getElementById('textbox2');
-
-        textbox1.value = randomNumber1;
-        textbox2.value = randomNumber2;
-
-        const messageContainer = document.getElementById('messageContainer');
-        messageContainer.innerHTML = '';
-
-        if ((randomNumber1 === 13 && randomNumber2 === 23) || (randomNumber1 === 23 && randomNumber2 === 13)) {
-            const successMessage = document.createElement('div');
-            successMessage.className = 'success';
-            successMessage.textContent = '成功';
-
-            const attemptMessage = document.createElement('div');
-            attemptMessage.className = 'attempts';
-            attemptMessage.textContent = `已尝试${attemptCount}次`;
-            attemptMessage.style.border = '1px solid black';
-            attemptMessage.style.padding = '10px';
-            attemptMessage.style.width = '150px';
-            attemptMessage.style.backgroundColor = '#f0f0f0';
-
-            messageContainer.appendChild(successMessage);
-            messageContainer.appendChild(attemptMessage);
-        }
-    });
-</script>
-
+    <script src="script.js"></script>
 </body>
 </html>
+/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+input[type="text"] {
+    margin: 5px;
+    padding: 10px;
+    width: 200px;
+    text-align: center;
+}
+
+button {
+    margin: 10px;
+    padding: 10px 20px;
+    background-color: black;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #333;
+}
+// script.js
+let attemptCount = 0;
+let pairFound13_23 = false;
+let pairFound23_13 = false;
+
+document.getElementById('generateButton').addEventListener('click', () => {
+    const num1 = Math.floor(Math.random() * 16) + 1; // 1-16
+    const num2 = Math.floor(Math.random() * 24) + 17; // 17-40
+
+    document.getElementById('num1').value = num1;
+    document.getElementById('num2').value = num2;
+
+    attemptCount++;
+    document.getElementById('attempts').value = `已尝试${attemptCount}次`;
+
+    if ((num1 === 13 && num2 === 23) || (num1 === 23 && num2 === 13)) {
+        document.getElementById('successMessage').hidden = false;
+    }
+
+    if (num1 === 13 && num2 === 23) {
+        pairFound13_23 = true;
+    }
+
+    if (num1 === 23 && num2 === 13) {
+        pairFound23_13 = true;
+    }
+
+    if (attemptCount >= 100) {
+        if (!pairFound13_23 || !pairFound23_13) {
+            // Force generating the missing pair
+            if (!pairFound13_23) {
+                document.getElementById('num1').value = 13;
+                document.getElementById('num2').value = 23;
+                pairFound13_23 = true;
+            } else if (!pairFound23_13) {
+                document.getElementById('num1').value = 23;
+                document.getElementById('num2').value = 13;
+                pairFound23_13 = true;
+            }
+            document.getElementById('successMessage').hidden = false;
+        }
+    }
+});
