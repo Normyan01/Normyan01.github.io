@@ -1,3 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Background Image Example</title>
+    <style>
+        body {
+            background-image: url('https://github.com/Normyan01/Normyan01.github.io/assets/169884063/2b1907ef-d9ed-4f97-8dba-4e2b7f1aa811');
+            background-size: cover; /* Make sure the background covers the entire page */
+            background-repeat: no-repeat; /* Prevent the background from repeating */
+            background-position: center center; /* Center the background image */
+            height: 100vh; /* Set the body height to 100% of the viewport height */
+            margin: 0; /* Remove default margin */
+        }
+    </style>
+</head>
+<body>
+</body>
+</html>
+
+
+
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
