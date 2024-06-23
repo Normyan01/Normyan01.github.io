@@ -43,3 +43,21 @@
     </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Number Generator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <input type="text" id="input1" readonly>
+        <input type="text" id="input2" readonly>
+        <div id="generateButton" class="button">生成</div>
+    </div>
+    <div id="successMessage" class="hidden">成功</div>
+    <script src="script.js"></script>
+</body>
+</html>
