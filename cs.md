@@ -1,21 +1,3 @@
-
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random Number Generator</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <div class="container">
-        <input type="text" id="input1" readonly>
-        <input type="text" id="input2" readonly>
-        <div id="generateButton" class="button">生成</div>
-    </div>
-    <div id="successMessage" class="hidden">成功</div>
-    <script src="script.js"></script>
-</body>
-</html>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,91 +5,84 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Random Number Generator</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
-        }
         .container {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 10px;
+            margin-top: 50px;
         }
-        .black-box {
+        .row {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        input {
+            width: 100px;
+            margin-right: 10px;
+            text-align: center;
+        }
+        button {
             background-color: black;
             color: white;
             padding: 10px 20px;
+            border: none;
             cursor: pointer;
         }
-        .success-message {
-            margin-top: 10px;
-            font-size: 16px;
-            color: green;
+        .success, .attempts {
+            margin-top: 20px;
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+
+<div class="container">
+    <div class="row">
         <input type="text" id="textbox1" readonly>
         <input type="text" id="textbox2" readonly>
-        <div class="black-box" onclick="generateNumbers()">生成</div>
     </div>
-    <div class="success-message" id="successMessage"></div>
-
-    <script>
-        function generateNumbers() {
-            const textbox1 = document.getElementById("textbox1");
-            const textbox2 = document.getElementById("textbox2");
-            const successMessage = document.getElementById("successMessage");
-
-            let num1, num2;
-            do {
-                num1 = Math.floor(Math.random() * 16) + 1;
-                num2 = Math.floor(Math.random() * 24) + 17;
-            } while (num1 === num2);
-
-            textbox1.value = num1;
-            textbox2.value = num2;
-
-            if ((num1 === 13 && num2 === 23) || (num1 === 23 && num2 === 13)) {
-                successMessage.innerText = "成功";
-
-    <div class="container">
-        <input type="text" id="attempts" readonly value="已尝试0次">
+    <div class="row">
+        <button id="generateBtn">生成</button>
     </div>
-    <div class="success-message" id="successMessage"></div>
+    <div id="messageContainer"></div>
+</div>
 
-    <script>
-        let attemptCount = 0;
+<script>
+    let attemptCount = 0;
 
-        function generateNumbers() {
-            const textbox1 = document.getElementById("textbox1");
-            const textbox2 = document.getElementById("textbox2");
-            const successMessage = document.getElementById("successMessage");
-            const attempts = document.getElementById("attempts");
+    document.getElementById('generateBtn').addEventListener('click', function() {
+        attemptCount++;
 
-            let num1, num2;
-            do {
-                num1 = Math.floor(Math.random() * 16) + 1;
-                num2 = Math.floor(Math.random() * 24) + 17;
-            } while (num1 === num2);
+        const randomNumber1 = Math.floor(Math.random() * 16) + 1;
+        const randomNumber2 = Math.floor(Math.random() * 24) + 17;
 
-            textbox1.value = num1;
-            textbox2.value = num2;
+        const textbox1 = document.getElementById('textbox1');
+        const textbox2 = document.getElementById('textbox2');
 
-            attemptCount++;
-            attempts.value = `已尝试${attemptCount}次`;
+        textbox1.value = randomNumber1;
+        textbox2.value = randomNumber2;
 
-            if ((num1 === 13 && num2 === 23) || (num1 === 23 && num2 === 13)) {
-                successMessage.innerText = "成功";
-            } else {
-                successMessage.innerText = "";
-            }
+        const messageContainer = document.getElementById('messageContainer');
+        messageContainer.innerHTML = '';
+
+        if ((randomNumber1 === 13 && randomNumber2 === 23) || (randomNumber1 === 23 && randomNumber2 === 13)) {
+            const successMessage = document.createElement('div');
+            successMessage.className = 'success';
+            successMessage.textContent = '成功';
+
+            const attemptMessage = document.createElement('div');
+            attemptMessage.className = 'attempts';
+            attemptMessage.textContent = `已尝试${attemptCount}次`;
+            attemptMessage.style.border = '1px solid black';
+            attemptMessage.style.padding = '10px';
+            attemptMessage.style.width = '150px';
+            attemptMessage.style.backgroundColor = '#f0f0f0';
+
+            messageContainer.appendChild(successMessage);
+            messageContainer.appendChild(attemptMessage);
         }
-    </script>
+    });
+</script>
+
 </body>
 </html>
