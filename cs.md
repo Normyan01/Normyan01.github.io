@@ -61,32 +61,69 @@
     <script src="script.js"></script>
 </body>
 </html>
-
-document.addEventListener("DOMContentLoaded", function() {
-    const input1 = document.getElementById("input1");
-    const input2 = document.getElementById("input2");
-    const generateButton = document.getElementById("generateButton");
-    const successMessage = document.getElementById("successMessage");
-
-    function getRandomNumber(exclude) {
-        let number;
-        do {
-            number = Math.floor(Math.random() * 40) + 1;
-        } while (number === exclude);
-        return number;
-    }
-
-    generateButton.addEventListener("click", function() {
-        const num1 = getRandomNumber(null);
-        const num2 = getRandomNumber(num1);
-
-        input1.value = num1;
-        input2.value = num2;
-
-        if ((num1 === 13 && num2 === 23) || (num1 === 23 && num2 === 13)) {
-            successMessage.classList.remove("hidden");
-        } else {
-            successMessage.classList.add("hidden");
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Number Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
         }
-    });
-});
+        .container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .black-box {
+            background-color: black;
+            color: white;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        .success-message {
+            margin-top: 10px;
+            font-size: 16px;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <input type="text" id="textbox1" readonly>
+        <input type="text" id="textbox2" readonly>
+        <div class="black-box" onclick="generateNumbers()">生成</div>
+    </div>
+    <div class="success-message" id="successMessage"></div>
+
+    <script>
+        function generateNumbers() {
+            const textbox1 = document.getElementById("textbox1");
+            const textbox2 = document.getElementById("textbox2");
+            const successMessage = document.getElementById("successMessage");
+
+            let num1, num2;
+            do {
+                num1 = Math.floor(Math.random() * 40) + 1;
+                num2 = Math.floor(Math.random() * 40) + 1;
+            } while (num1 === num2);
+
+            textbox1.value = num1;
+            textbox2.value = num2;
+
+            if ((num1 === 13 && num2 === 23) || (num1 === 23 && num2 === 13)) {
+                successMessage.innerText = "成功";
+            } else {
+                successMessage.innerText = "";
+            }
+        }
+    </script>
+</body>
+</html>
