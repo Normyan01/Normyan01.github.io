@@ -1,4 +1,25 @@
 # Normyan01.github.io  
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red Text Example</title>
+</head>
+<body>
+    <div id="redText">
+        请勿传播！
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const element = document.getElementById("redText");
+            element.style.color = "red";
+            element.style.fontFamily = "Arial, sans-serif"; // Optional: sets a nice font
+            element.style.fontSize = "24px"; // Optional: sets the font size
+            element.style.margin = "20px"; // Optional: adds some margin around the text
+        });
+    </script>
+</body>
+</html>
                   
 ## [点击此处](https://ddkg.top)**访问院长网站！！！**    
 ## [点击此处](https://bjjh201703.com)一个不太好的东西
