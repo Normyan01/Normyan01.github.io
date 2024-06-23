@@ -61,3 +61,32 @@
     <script src="script.js"></script>
 </body>
 </html>
+
+document.addEventListener("DOMContentLoaded", function() {
+    const input1 = document.getElementById("input1");
+    const input2 = document.getElementById("input2");
+    const generateButton = document.getElementById("generateButton");
+    const successMessage = document.getElementById("successMessage");
+
+    function getRandomNumber(exclude) {
+        let number;
+        do {
+            number = Math.floor(Math.random() * 40) + 1;
+        } while (number === exclude);
+        return number;
+    }
+
+    generateButton.addEventListener("click", function() {
+        const num1 = getRandomNumber(null);
+        const num2 = getRandomNumber(num1);
+
+        input1.value = num1;
+        input2.value = num2;
+
+        if ((num1 === 13 && num2 === 23) || (num1 === 23 && num2 === 13)) {
+            successMessage.classList.remove("hidden");
+        } else {
+            successMessage.classList.add("hidden");
+        }
+    });
+});
