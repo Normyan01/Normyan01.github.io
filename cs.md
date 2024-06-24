@@ -219,3 +219,55 @@
     </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random ABC Display</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: black;
+        }
+
+        .container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .abc {
+            position: absolute;
+            color: blue;
+            font-size: 24px;
+            opacity: 0;
+            animation: fadeIn 10s infinite;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="abc" style="left: 10%; top: 20%;">ABC</div>
+        <div class="abc" style="left: 30%; top: 40%;">ABC</div>
+        <div class="abc" style="left: 50%; top: 60%;">ABC</div>
+        <div class="abc" style="left: 70%; top: 80%;">ABC</div>
+        <div class="abc" style="left: 90%; top: 10%;">ABC</div>
+        <div class="abc" style="left: 20%; top: 30%;">ABC</div>
+        <div class="abc" style="left: 40%; top: 50%;">ABC</div>
+        <div class="abc" style="left: 60%; top: 70%;">ABC</div>
+        <div class="abc" style="left: 80%; top: 90%;">ABC</div>
+        <div class="abc" style="left: 15%; top: 45%;">ABC</div>
+    </div>
+</body>
+</html>
