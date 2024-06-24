@@ -166,51 +166,59 @@ document.addEventListener('DOMContentLoaded', function() {
     const gameArea = document.getElementById('gameArea');
     const player = document.getElementById('player');
     let score = 0;
+    let isShooting = false;
 
-    // 监听鼠标移动事件，控制飞机位置
+    // 监听鼠标移动事件，控制飞机位置和子弹发射点
     gameArea.addEventListener('mousemove', function(event) {
         let x = event.clientX - gameArea.offsetLeft;
         player.style.left = x - player.clientWidth / 2 + 'px';
     });
 
-    // 监听鼠标点击事件，发射子弹
-    gameArea.addEventListener('click', function(event) {
-        shootBullet();
+    // 监听鼠标按下和松开事件，控制连续发射
+    gameArea.addEventListener('mousedown', function(event) {
+        isShooting = true;
+        shootBullets();
     });
 
-    // 定义发射子弹的函数
-    function shootBullet() {
+    gameArea.addEventListener('mouseup', function(event) {
+        isShooting = false;
+    });
+
+    // 发射子弹
+    function shootBullets() {
+        if (!isShooting) return;
+
         let bullet = document.createElement('div');
         bullet.className = 'bullet';
-        bullet.style.left = parseInt(player.style.left) + player.clientWidth / 2 - 2.5 + 'px';
-        bullet.style.bottom = '50px';
+        let playerRect = player.getBoundingClientRect();
+        bullet.style.left = playerRect.left + player.clientWidth / 2 - 2.5 + 'px';
+        bullet.style.bottom = playerRect.bottom + 'px';
         gameArea.appendChild(bullet);
 
         // 子弹移动动画
         let bulletInterval = setInterval(function() {
-            let bullets = document.getElementsByClassName('bullet');
-            for (let i = 0; i < bullets.length; i++) {
-                let bullet = bullets[i];
-                bullet.style.bottom = parseInt(bullet.style.bottom) + 10 + 'px';
+            bullet.style.bottom = parseInt(bullet.style.bottom) + 10 + 'px';
 
-                // 检测子弹是否击中障碍物
-                let obstacles = document.getElementsByClassName('obstacle');
-                for (let j = 0; j < obstacles.length; j++) {
-                    let obstacle = obstacles[j];
-                    if (isCollision(bullet, obstacle)) {
-                        obstacle.remove();
-                        bullet.remove();
-                        score++;
-                        document.getElementById('score').textContent = 'Score: ' + score;
-                    }
-                }
-
-                // 子弹出界移除
-                if (parseInt(bullet.style.bottom) > window.innerHeight) {
+            // 检测子弹是否击中障碍物
+            let obstacles = document.getElementsByClassName('obstacle');
+            for (let j = 0; j < obstacles.length; j++) {
+                let obstacle = obstacles[j];
+                if (isCollision(bullet, obstacle)) {
+                    obstacle.remove();
                     bullet.remove();
+                    score++;
+                    document.getElementById('score').textContent = 'Score: ' + score;
                 }
             }
+
+            // 子弹出界移除
+            if (parseInt(bullet.style.bottom) > window.innerHeight) {
+                bullet.remove();
+            }
         }, 50);
+
+        // 继续发射子弹
+        setTimeout(shootBullets, 150);
     }
 
     // 碰撞检测函数
@@ -237,3 +245,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </body>
 </html>
+
