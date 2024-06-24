@@ -107,56 +107,133 @@
     </script>
 </body>
 </html>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random ABC Display</title>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            background-color: black;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>飞机射击游戏</title>
+<style>
+    body {
+        margin: 0;
+        overflow: hidden;
+        background-color: #f0f0f0;
+    }
+    #gameArea {
+        width: 100vw;
+        height: 100vh;
+        position: relative;
+    }
+    #player {
+        width: 50px;
+        height: 50px;
+        background-color: blue;
+        position: absolute;
+        bottom: 20px;
+        left: calc(50% - 25px);
+    }
+    .bullet {
+        width: 5px;
+        height: 10px;
+        background-color: red;
+        position: absolute;
+    }
+    .obstacle {
+        width: 30px;
+        height: 30px;
+        background-color: green;
+        position: absolute;
+        top: -30px;
+        animation: moveObstacle 3s linear infinite;
+    }
+    @keyframes moveObstacle {
+        0% {
+            transform: translateY(0);
         }
-
-        .container {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
+        100% {
+            transform: translateY(100vh);
         }
-
-        .abc {
-            position: absolute;
-            color: blue;
-            font-size: 24px;
-            opacity: 0;
-            animation: fadeIn 10s infinite;
-        }
-
-        @keyframes fadeIn {
-            0% {
-                opacity: 0;
-            }
-            100% {
-                opacity: 1;
-            }
-        }
-    </style>
+    }
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="abc" style="left: 10%; top: 20%;">ABC</div>
-        <div class="abc" style="left: 30%; top: 40%;">ABC</div>
-        <div class="abc" style="left: 50%; top: 60%;">ABC</div>
-        <div class="abc" style="left: 70%; top: 80%;">ABC</div>
-        <div class="abc" style="left: 90%; top: 10%;">ABC</div>
-        <div class="abc" style="left: 20%; top: 30%;">ABC</div>
-        <div class="abc" style="left: 40%; top: 50%;">ABC</div>
-        <div class="abc" style="left: 60%; top: 70%;">ABC</div>
-        <div class="abc" style="left: 80%; top: 90%;">ABC</div>
-        <div class="abc" style="left: 15%; top: 45%;">ABC</div>
-    </div>
+<div id="gameArea">
+    <div id="player"></div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const gameArea = document.getElementById('gameArea');
+    const player = document.getElementById('player');
+    let score = 0;
+
+    // 监听鼠标移动事件，控制飞机位置
+    gameArea.addEventListener('mousemove', function(event) {
+        let x = event.clientX - gameArea.offsetLeft;
+        player.style.left = x - player.clientWidth / 2 + 'px';
+    });
+
+    // 监听鼠标点击事件，发射子弹
+    gameArea.addEventListener('click', function(event) {
+        shootBullet();
+    });
+
+    // 定义发射子弹的函数
+    function shootBullet() {
+        let bullet = document.createElement('div');
+        bullet.className = 'bullet';
+        bullet.style.left = parseInt(player.style.left) + player.clientWidth / 2 - 2.5 + 'px';
+        bullet.style.bottom = '50px';
+        gameArea.appendChild(bullet);
+
+        // 子弹移动动画
+        let bulletInterval = setInterval(function() {
+            let bullets = document.getElementsByClassName('bullet');
+            for (let i = 0; i < bullets.length; i++) {
+                let bullet = bullets[i];
+                bullet.style.bottom = parseInt(bullet.style.bottom) + 10 + 'px';
+
+                // 检测子弹是否击中障碍物
+                let obstacles = document.getElementsByClassName('obstacle');
+                for (let j = 0; j < obstacles.length; j++) {
+                    let obstacle = obstacles[j];
+                    if (isCollision(bullet, obstacle)) {
+                        obstacle.remove();
+                        bullet.remove();
+                        score++;
+                        document.getElementById('score').textContent = 'Score: ' + score;
+                    }
+                }
+
+                // 子弹出界移除
+                if (parseInt(bullet.style.bottom) > window.innerHeight) {
+                    bullet.remove();
+                }
+            }
+        }, 50);
+    }
+
+    // 碰撞检测函数
+    function isCollision(obj1, obj2) {
+        let rect1 = obj1.getBoundingClientRect();
+        let rect2 = obj2.getBoundingClientRect();
+        return !(rect1.right < rect2.left || 
+                 rect1.left > rect2.right || 
+                 rect1.bottom < rect2.top || 
+                 rect1.top > rect2.bottom);
+    }
+
+    // 创建障碍物
+    setInterval(function() {
+        let obstacle = document.createElement('div');
+        obstacle.className = 'obstacle';
+        obstacle.style.left = Math.random() * (gameArea.clientWidth - 30) + 'px';
+        gameArea.appendChild(obstacle);
+    }, 2000);
+});
+</script>
+
+<p id="score" style="position: fixed; top: 10px; right: 10px; font-size: 18px;">Score: 0</p>
+
 </body>
 </html>
