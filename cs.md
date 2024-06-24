@@ -155,3 +155,26 @@ function TrexRunnerBot() {
 }
 let bot = TrexRunnerBot();
 let botInterval = setInterval(bot.conquerTheGame, 2);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Precise Timer</title>
+    <script>
+        function startTimer() {
+            const startTime = performance.now();
+            setTimeout(() => {
+                const endTime = performance.now();
+                const elapsedMilliseconds = endTime - startTime;
+                const elapsedSeconds = elapsedMilliseconds / 1000;
+                document.getElementById("result").textContent = `Elapsed time: ${elapsedSeconds.toFixed(6)} seconds`;
+            }, 2719);
+        }
+    </script>
+</head>
+<body>
+    <button onclick="startTimer()">Start Timer</button>
+    <p id="result"></p>
+</body>
+</html>
