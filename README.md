@@ -16,7 +16,7 @@
             element.style.color = "red";
             element.style.fontFamily = "Arial, sans-serif"; // Optional: sets a nice font
             element.style.fontSize = "24px"; // Optional: sets the font size
-            element.style.margin = "20px"; // Optional: adds some margin around the text
+            element.style.margin = "0px"; // Optional: adds some margin around the text
         });
     </script>
 </body>
