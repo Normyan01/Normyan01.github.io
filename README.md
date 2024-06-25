@@ -1,27 +1,10 @@
 # Normyan01.github.io  ![image](https://github.com/Normyan01/Normyan01.github.io/assets/169884063/2b1907ef-d9ed-4f97-8dba-4e2b7f1aa811)
+<html>
+    <body>
+        <p style="color:red;">请勿传播！！！</p>
+    </body>
+</html>       
 
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Red Text Example</title>
-</head>
-<body>
-    <div id="redText">
-        请勿传播！
-    </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const element = document.getElementById("redText");
-            element.style.color = "red";
-            element.style.fontFamily = "Arial, sans-serif"; // Optional: sets a nice font
-            element.style.fontSize = "24px"; // Optional: sets the font size
-            element.style.margin = "0px"; // Optional: adds some margin around the text
-        });
-    </script>
-</body>
-</html>
-                  
 ## [点击此处](https://ddkg.top)**访问院长网站！！！**    
 ## [点击此处](https://bjjh201703.com)一个不太好的东西
 
