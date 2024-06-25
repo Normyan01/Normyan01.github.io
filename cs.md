@@ -1,74 +1,59 @@
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>流星雨</title>
+		<meta name="keywords" content="关键词，关键字">
+		<meta name="description" content="描述信息">
+		<style>
+			body {
+				margin: 0;
+				overflow: hidden;
+			}
+		</style>
+	</head>
+ 
+	<body>
+ 
+		<canvas width=400 height=400 style="background:#000000;" id="canvas"></canvas>
+ 
+		<script>
+					
+			var canvas = document.getElementById("canvas");
+			var ctx = canvas.getContext("2d");
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>T-Rex Runner Bot</title>
-</head>
-<body>
-    <script>
-        function TrexRunnerBot() {
-            const makeKeyArgs = (keyCode) => {
-                const preventDefault = () => void 0;
-                return { keyCode, preventDefault };
-            };
-            const upKeyArgs = makeKeyArgs(38);
-            const downKeyArgs = makeKeyArgs(40);
-            const startArgs = makeKeyArgs(32);
-            if (!Runner().playing) {
-                Runner().onKeyDown(startArgs);
-                setTimeout(() => {
-                    Runner().onKeyUp(startArgs);
-                }, 500);
-            }
-            function conquerTheGame() {
-                if (!Runner || !Runner().horizon.obstacles[0]) return;
-                const obstacle = Runner().horizon.obstacles[0];
-                if (obstacle.typeConfig && obstacle.typeConfig.type === 'SNACK') return;
-                if (needsToTackle(obstacle) && closeEnoughToTackle(obstacle)) tackle(obstacle);
-            }
-            function needsToTackle(obstacle) {
-                return obstacle.yPos !== 50;
-            }
-            function closeEnoughToTackle(obstacle) {
-                return obstacle.xPos <= Runner().currentSpeed * 18;
-            }
-            function tackle(obstacle) {
-                if (isDuckable(obstacle)) {
-                    duck();
-                } else {
-                    jumpOver(obstacle);
-                }
-            }
-            function isDuckable(obstacle) {
-                return obstacle.yPos === 50;
-            }
-            function duck() {
-                Runner().onKeyDown(downKeyArgs);
-                setTimeout(() => {
-                    Runner().onKeyUp(downKeyArgs);
-                }, 500);
-            }
-            function jumpOver(obstacle) {
-                if (isNextObstacleCloseTo(obstacle))
-                    jumpFast();
-                else
-                    Runner().onKeyDown(upKeyArgs);
-            }
-            function isNextObstacleCloseTo(currentObstacle) {
-                const nextObstacle = Runner().horizon.obstacles[1];
-
-                return nextObstacle && nextObstacle.xPos - currentObstacle.xPos <= Runner().currentSpeed * 42;
-            }
-            function jumpFast() {
-                Runner().onKeyDown(upKeyArgs);
-                Runner().onKeyUp(upKeyArgs);
-            }
-            return { conquerTheGame: conquerTheGame };
-        }
-        let bot = TrexRunnerBot();
-        let botInterval = setInterval(bot.conquerTheGame, 2);
-    </script>
-</body>
+			var s = window.screen;
+			var w = s.width;
+			var h = s.height;
+			canvas.width = w;
+			canvas.height = h;
+ 
+			var fontSize = 14;
+			var clos = Math.floor(w/fontSize);
+			var drops = [];
+			var str = "Normyan";
+			for(var i = 0;i<clos;i++) {
+				drops.push(0);
+			}
+ 
+			function drawString() {
+				ctx.fillStyle="rgba(0,0,0,0.05)"
+				ctx.fillRect(0,0,w,h);
+ 
+				ctx.font = "600 "+fontSize+"px Serif";
+				ctx.fillStyle = "#00ff00";
+ 
+				for(var i = 0;i<clos;i++) {
+					var x = i*fontSize;
+					var y = drops[i]*fontSize;
+					ctx.fillText(str[Math.floor(Math.random()*str.length)],x,y);
+					if(y>h&&Math.random()>0.99){
+						drops[i] = 0;
+					}
+					drops[i]++;
+				}
+					
+			}
+			setInterval(drawString,30);
+		</script>
+	</body>
 </html>
