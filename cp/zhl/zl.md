@@ -60,4 +60,4 @@
 
 # 仅本人知道密码
 
-## [番外篇，王某讲故事，奇奇怪怪的讨论](https://normyan.github.io/cp/zhl/zl/fw)
+## [番外篇，王某讲故事，奇奇怪怪的讨论](https://normyan01.github.io/cp/zhl/zl/fw)
