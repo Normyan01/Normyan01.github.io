@@ -20,13 +20,32 @@
         }
 
         function updateRandomString() {
-            document.getElementById('randomString').innerText = generateRandomString();
+            const newString = generateRandomString();
+            localStorage.setItem('randomString', newString);
+            localStorage.setItem('timestamp', Date.now());
+            document.getElementById('randomString').innerText = newString;
         }
 
-        // Initial generation
-        updateRandomString();
+        function loadRandomString() {
+            const savedString = localStorage.getItem('randomString');
+            const savedTimestamp = localStorage.getItem('timestamp');
 
-        // Update every minute (60000 milliseconds)
+            if (savedString && savedTimestamp) {
+                const currentTime = Date.now();
+                const timeDiff = currentTime - savedTimestamp;
+
+                // Check if one minute has passed (60000 milliseconds)
+                if (timeDiff >= 60000) {
+                    updateRandomString();
+                } else {
+                    document.getElementById('randomString').innerText = savedString;
+                }
+            } else {
+                updateRandomString();
+            }
+        }
+
+        loadRandomString();
         setInterval(updateRandomString, 60000);
     </script>
 </body>
