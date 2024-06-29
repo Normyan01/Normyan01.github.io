@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random String Generator</title>
+    <title>Random String Display</title>
 </head>
 <body>
-    <h1>Random String Generator</h1>
-    <button onclick="generateRandomString()">Generate Random String</button>
     <p id="randomString"></p>
 
     <script>
@@ -18,9 +16,10 @@
                 const randomIndex = Math.floor(Math.random() * characters.length);
                 result += characters[randomIndex];
             }
-            document.getElementById('randomString').innerText = result;
+            return result;
         }
+
+        document.getElementById('randomString').innerText = generateRandomString();
     </script>
 </body>
 </html>
-
