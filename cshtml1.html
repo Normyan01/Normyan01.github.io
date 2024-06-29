@@ -19,7 +19,15 @@
             return result;
         }
 
-        document.getElementById('randomString').innerText = generateRandomString();
+        function updateRandomString() {
+            document.getElementById('randomString').innerText = generateRandomString();
+        }
+
+        // Initial generation
+        updateRandomString();
+
+        // Update every minute (60000 milliseconds)
+        setInterval(updateRandomString, 60000);
     </script>
 </body>
 </html>
