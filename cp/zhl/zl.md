@@ -1,6 +1,7 @@
 # *ZL*       
 #### [返回主页](https://normyan01.github.io)
 ## 于2024.6.11创建
+## [**特别栏目**王某讲故事，奇奇怪怪的讨论](https://normyan01.github.io/cp/zhl/zl/tb)
 ### 2024.6.12前 略（后续可能会更）
 <html lang="en">
 <head>
@@ -60,4 +61,4 @@
 
 # 仅本人知道密码
 
-## [番外篇，王某讲故事，奇奇怪怪的讨论](https://normyan01.github.io/cp/zhl/zl/fw)
+
