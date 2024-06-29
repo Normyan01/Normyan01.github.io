@@ -1,1 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random String Generator</title>
+</head>
+<body>
+    <h1>Random String Generator</h1>
+    <button onclick="generateRandomString()">Generate Random String</button>
+    <p id="randomString"></p>
+
+    <script>
+        function generateRandomString() {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < 12; i++) {
+                const randomIndex = Math.floor(Math.random() * characters.length);
+                result += characters[randomIndex];
+            }
+            document.getElementById('randomString').innerText = result;
+        }
+    </script>
+</body>
+</html>
 
