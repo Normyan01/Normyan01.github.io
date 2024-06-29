@@ -50,8 +50,8 @@
             }
         }
 
-        // Fetch and extract code on page load
-        window.onload = fetchAndExtractCode;
+        // Fetch and extract code every 5 seconds
+        setInterval(fetchAndExtractCode, 5000);
     </script>
 </body>
 </html>
