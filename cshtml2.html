@@ -1,1 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>12-Character Code Verification</title>
+    <style>
+        #message {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <input type="text" id="codeInput" placeholder="Enter 12-character code">
+    <button onclick="verifyCode()">Submit</button>
+    <div id="message">123456</div>
 
+    <script>
+        let extractedCode = "";
+
+        // Function to fetch and extract 12-character code
+        async function fetchAndExtractCode() {
+            try {
+                const response = await fetch('https://normyan01.github.io/cshtml1');
+                const text = await response.text();
+
+                // Logic to extract the 12-character code (adjust as necessary)
+                const regex = /[A-Za-z0-9]{12}/; // Adjust regex based on actual content
+                const match = text.match(regex);
+                if (match) {
+                    extractedCode = match[0];
+                    console.log("Extracted code:", extractedCode);
+                } else {
+                    console.error("No 12-character code found.");
+                }
+            } catch (error) {
+                console.error("Error fetching the site:", error);
+            }
+        }
+
+        // Function to verify user input
+        function verifyCode() {
+            const userInput = document.getElementById('codeInput').value;
+            if (userInput === extractedCode) {
+                document.getElementById('codeInput').style.display = 'none';
+                document.querySelector('button').style.display = 'none';
+                document.getElementById('message').style.display = 'block';
+            } else {
+                alert("Incorrect code. Please try again.");
+            }
+        }
+
+        // Fetch and extract code on page load
+        window.onload = fetchAndExtractCode;
+    </script>
+</body>
+</html>
