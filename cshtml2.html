@@ -3,47 +3,50 @@
 <head>  
 <meta charset="UTF-8">  
 <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-<title>Verify Code Example</title>  
+<title>验证码验证</title>  
 <script>  
-// 模拟从服务器获取的验证码列表（实际情况下这应该是一个API调用）  
-let verifyCodes = ['123456789012', '234567890123', '345678901234']; // 示例验证码  
-let currentIndex = 0;  
-  
-// 模拟从服务器获取验证码的函数  
-function fetchVerifyCode() {  
-  // 这里只是简单地返回列表中的一个验证码，实际情况下应该是一个异步请求  
-  return verifyCodes[currentIndex++ % verifyCodes.length]; // 循环使用验证码列表  
+// 假设我们有一个函数可以从 normyan01.github.io/cshtml1 获取验证码（这里只是模拟）  
+function fetchCaptcha() {  
+    // 这里应使用AJAX请求从normyan01.github.io/cshtml1获取验证码  
+    // 但为了示例，我们直接返回一个模拟的验证码  
+    return Promise.resolve("123456789012"); // 假设这是从URL获取的验证码  
 }  
   
-// 每隔1秒模拟获取验证码（实际情况下不会这样做，而是监听用户行为）  
-setInterval(function() {  
-  // 这里只是打印到控制台，实际情况下可能会更新页面上的某个元素  
-  console.log('Current verify code:', fetchVerifyCode());  
-  // 注意：在实际应用中，你不会在客户端存储或暴露验证码，这只是一个示例  
-}, 1000);  
-  
-// 验证函数  
-function verifyInput() {  
-  const input = document.getElementById('verify-code').value;  
-  const currentCode = fetchVerifyCode(); // 这里只是为了演示，实际验证时不应再次获取验证码  
-  if (input === currentCode.substring(0, 12)) { // 假设我们只比较前12位  
-    document.getElementById('verify-form').remove(); // 移除表单  
-    const result = document.createElement('p');  
-    result.textContent = '123';  
-    document.body.appendChild(result); // 显示结果  
-  } else {  
-    alert('Incorrect verify code'); // 提示验证码错误  
-  }  
+function validateCaptcha() {  
+    var captchaInput = document.getElementById("captchaInput").value;  
+      
+    fetchCaptcha().then(function(serverCaptcha) {  
+        if (captchaInput === serverCaptcha) {  
+            // 匹配成功  
+            var inputElement = document.getElementById("captchaInput");  
+            inputElement.parentNode.removeChild(inputElement);  
+            var message = document.createElement("p");  
+            message.textContent = "123";  
+            document.body.appendChild(message);  
+        } else {  
+            // 匹配失败  
+            var error = document.getElementById("error");  
+            if (!error) {  
+                error = document.createElement("p");  
+                error.id = "error";  
+                document.body.appendChild(error);  
+            }  
+            error.textContent = "错误验证码";  
+        }  
+    }).catch(function(error) {  
+        console.error("获取验证码时出错:", error);  
+        // 显示错误或其他适当的行为  
+    });  
 }  
 </script>  
 </head>  
 <body>  
   
-<form id="verify-form">  
-  <label for="verify-code">输入验证码：</label>  
-  <input type="text" id="verify-code" placeholder="输入验证码">  
-  <button type="button" onclick="verifyInput()">验证</button>  
-</form>  
+<input type="text" id="captchaInput" placeholder="请输入验证码">  
+<button onclick="validateCaptcha()">验证</button>  
+  
+<!-- 错误提示信息默认不显示 -->  
+<p id="error" style="display: none;"></p>  
   
 </body>  
 </html>
