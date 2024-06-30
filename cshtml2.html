@@ -3,55 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>12-Character Code Verification</title>
-    <style>
-        #message {
-            display: none;
+    <title>验证码验证</title>
+    <script>
+        // URL from which to fetch the 12-character code
+        const url = 'https://normyan01.github.io/cshtml1';
+
+        function fetchCode() {
+            fetch(url)
+                .then(response => response.text())
+                .then(data => {
+                    // Assume the 12-character code is the entire content of the URL
+                    const code = data.trim().substring(0, 12);
+                    console.log('Fetched code:', code);
+                    // Store the fetched code in a global variable
+                    window.currentCode = code;
+                })
+                .catch(error => console.error('Error fetching code:', error));
         }
-    </style>
+
+        // Fetch the code every second
+        setInterval(fetchCode, 1000);
+
+        function verifyCode() {
+            const userCode = document.getElementById('codeInput').value;
+            const messageElement = document.getElementById('message');
+
+            if (userCode === window.currentCode) {
+                // If the code matches, remove the input elements and show "123"
+                document.getElementById('verification').innerHTML = '123';
+            } else {
+                // If the code does not match, show an error message
+                messageElement.textContent = 'incorrect verify code';
+                messageElement.style.color = 'red';
+            }
+        }
+    </script>
 </head>
 <body>
-    <input type="text" id="codeInput" placeholder="Enter 12-character code">
-    <button onclick="verifyCode()">Submit</button>
-    <div id="message">123456</div>
-
-    <script>
-        let extractedCode = "";
-
-        // Function to fetch and extract 12-character code
-        async function fetchAndExtractCode() {
-            try {
-                const response = await fetch('https://normyan01.github.io/cshtml1');
-                const text = await response.text();
-
-                // Logic to extract the 12-character code (adjust as necessary)
-                const regex = /[A-Za-z0-9]{12}/; // Adjust regex based on actual content
-                const match = text.match(regex);
-                if (match) {
-                    extractedCode = match[0];
-                    console.log("Extracted code:", extractedCode);
-                } else {
-                    console.error("No 12-character code found.");
-                }
-            } catch (error) {
-                console.error("Error fetching the site:", error);
-            }
-        }
-
-        // Function to verify user input
-        function verifyCode() {
-            const userInput = document.getElementById('codeInput').value;
-            if (userInput === extractedCode) {
-                document.getElementById('codeInput').style.display = 'none';
-                document.querySelector('button').style.display = 'none';
-                document.getElementById('message').style.display = 'block';
-            } else {
-                alert("Incorrect code. Please try again.");
-            }
-        }
-
-        // Fetch and extract code every 5 seconds
-        setInterval(fetchAndExtractCode, 5000);
-    </script>
+    <div id="verification">
+        <label for="codeInput">输入验证码：</label>
+        <input type="text" id="codeInput" maxlength="12">
+        <button onclick="verifyCode()">验证</button>
+        <p id="message"></p>
+    </div>
 </body>
 </html>
