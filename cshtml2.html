@@ -1,50 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>验证码验证</title>
-    <script>
-        // URL from which to fetch the 12-character code
-        const url = 'https://normyan01.github.io/cshtml1';
-
-        function fetchCode() {
-            fetch(url)
-                .then(response => response.text())
-                .then(data => {
-                    // Assume the 12-character code is the entire content of the URL
-                    const code = data.trim().substring(0, 12);
-                    console.log('Fetched code:', code);
-                    // Store the fetched code in a global variable
-                    window.currentCode = code;
-                })
-                .catch(error => console.error('Error fetching code:', error));
-        }
-
-        // Fetch the code every second
-        setInterval(fetchCode, 1000);
-
-        function verifyCode() {
-            const userCode = document.getElementById('codeInput').value;
-            const messageElement = document.getElementById('message');
-
-            if (userCode === window.currentCode) {
-                // If the code matches, remove the input elements and show "123"
-                document.getElementById('verification').innerHTML = '123';
-            } else {
-                // If the code does not match, show an error message
-                messageElement.textContent = 'incorrect verify code';
-                messageElement.style.color = 'red';
-            }
-        }
-    </script>
-</head>
-<body>
-    <div id="verification">
-        <label for="codeInput">输入验证码：</label>
-        <input type="text" id="codeInput" maxlength="12">
-        <button onclick="verifyCode()">验证</button>
-        <p id="message"></p>
-    </div>
-</body>
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  
+<title>Verify Code Example</title>  
+<script>  
+// 模拟从服务器获取的验证码列表（实际情况下这应该是一个API调用）  
+let verifyCodes = ['123456789012', '234567890123', '345678901234']; // 示例验证码  
+let currentIndex = 0;  
+  
+// 模拟从服务器获取验证码的函数  
+function fetchVerifyCode() {  
+  // 这里只是简单地返回列表中的一个验证码，实际情况下应该是一个异步请求  
+  return verifyCodes[currentIndex++ % verifyCodes.length]; // 循环使用验证码列表  
+}  
+  
+// 每隔1秒模拟获取验证码（实际情况下不会这样做，而是监听用户行为）  
+setInterval(function() {  
+  // 这里只是打印到控制台，实际情况下可能会更新页面上的某个元素  
+  console.log('Current verify code:', fetchVerifyCode());  
+  // 注意：在实际应用中，你不会在客户端存储或暴露验证码，这只是一个示例  
+}, 1000);  
+  
+// 验证函数  
+function verifyInput() {  
+  const input = document.getElementById('verify-code').value;  
+  const currentCode = fetchVerifyCode(); // 这里只是为了演示，实际验证时不应再次获取验证码  
+  if (input === currentCode.substring(0, 12)) { // 假设我们只比较前12位  
+    document.getElementById('verify-form').remove(); // 移除表单  
+    const result = document.createElement('p');  
+    result.textContent = '123';  
+    document.body.appendChild(result); // 显示结果  
+  } else {  
+    alert('Incorrect verify code'); // 提示验证码错误  
+  }  
+}  
+</script>  
+</head>  
+<body>  
+  
+<form id="verify-form">  
+  <label for="verify-code">输入验证码：</label>  
+  <input type="text" id="verify-code" placeholder="输入验证码">  
+  <button type="button" onclick="verifyInput()">验证</button>  
+</form>  
+  
+</body>  
 </html>
