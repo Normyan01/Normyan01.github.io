@@ -5,48 +5,43 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">  
 <title>验证码验证</title>  
 <script>  
-// 假设我们有一个函数可以从 normyan01.github.io/cshtml1 获取验证码（这里只是模拟）  
-function fetchCaptcha() {  
-    // 这里应使用AJAX请求从normyan01.github.io/cshtml1获取验证码  
-    // 但为了示例，我们直接返回一个模拟的验证码  
-    return Promise.resolve("123456789012"); // 假设这是从URL获取的验证码  
-}  
+document.addEventListener('DOMContentLoaded', function() {  
+    var captchaInput = document.getElementById('captchaInput');  
+    var validateButton = document.getElementById('validateButton');  
+    var errorMessage = document.getElementById('errorMessage');  
   
-function validateCaptcha() {  
-    var captchaInput = document.getElementById("captchaInput").value;  
-      
-    fetchCaptcha().then(function(serverCaptcha) {  
-        if (captchaInput === serverCaptcha) {  
-            // 匹配成功  
-            var inputElement = document.getElementById("captchaInput");  
-            inputElement.parentNode.removeChild(inputElement);  
-            var message = document.createElement("p");  
-            message.textContent = "123";  
-            document.body.appendChild(message);  
-        } else {  
-            // 匹配失败  
-            var error = document.getElementById("error");  
-            if (!error) {  
-                error = document.createElement("p");  
-                error.id = "error";  
-                document.body.appendChild(error);  
-            }  
-            error.textContent = "错误验证码";  
-        }  
-    }).catch(function(error) {  
-        console.error("获取验证码时出错:", error);  
-        // 显示错误或其他适当的行为  
+    validateButton.addEventListener('click', function() {  
+        // 假设你的API端点是 https://example.com/api/captcha  
+        fetch('https://example.com/api/captcha')  
+            .then(response => response.text()) // 假设API返回纯文本验证码  
+            .then(serverCaptcha => {  
+                var userCaptcha = captchaInput.value;  
+                if (userCaptcha === serverCaptcha) {  
+                    // 匹配成功  
+                    captchaInput.parentNode.removeChild(captchaInput);  
+                    var successMessage = document.createElement('p');  
+                    successMessage.textContent = "123";  
+                    document.body.appendChild(successMessage);  
+                    errorMessage.textContent = ''; // 清除错误信息  
+                } else {  
+                    // 匹配失败  
+                    errorMessage.textContent = '错误验证码';  
+                }  
+            })  
+            .catch(error => {  
+                console.error('获取验证码时出错:', error);  
+                errorMessage.textContent = '获取验证码时出错';  
+            });  
     });  
-}  
+});  
 </script>  
 </head>  
 <body>  
   
 <input type="text" id="captchaInput" placeholder="请输入验证码">  
-<button onclick="validateCaptcha()">验证</button>  
+<button id="validateButton">验证</button>  
   
-<!-- 错误提示信息默认不显示 -->  
-<p id="error" style="display: none;"></p>  
+<p id="errorMessage" style="color: red;"></p>  
   
 </body>  
 </html>
