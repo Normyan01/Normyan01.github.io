@@ -85,7 +85,7 @@
 <body>
     <!-- 页面内容 -->
     <div class="footer">
-        <span>abc</span> <!-- 最左侧文本 -->
+        <span>by Charlie Normyan</span> <!-- 最左侧文本 -->
         <span style="float: right;">V1.0</span> <!-- 最右侧文本 -->
     </div>
 </body>
