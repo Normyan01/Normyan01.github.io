@@ -58,3 +58,31 @@
     </script>
 </body>
 </html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .footer {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            background-color: #333; /* 设置背景颜色 */
+            color: white; /* 设置文本颜色 */
+            text-align: center; /* 居中文本 */
+            padding: 10px; /* 添加一些内边距 */
+        }
+        .footer span:last-child {
+            margin-right: 30px; /* 距离最右侧的间距 */
+        }
+    </style>
+</head>
+<body>
+    <!-- 页面内容 -->
+    <div class="footer">
+        <span>by Charlie Normyan</span> <!-- 最左侧文本 -->
+        <span style="float: right;">V1.0</span> <!-- 最右侧文本 -->
+    </div>
+</body>
+</html>
