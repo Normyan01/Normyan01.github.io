@@ -73,7 +73,11 @@
             text-align: center; /* 居中文本 */
             padding: 10px; /* 添加一些内边距 */
         }
+        .footer span:first-child {
+            font-family: cursive; /* 使用 cursive 字体样式 */
+        }
         .footer span:last-child {
+            font-family: serif; /* 使用 serif 字体样式 */
             margin-right: 30px; /* 距离最右侧的间距 */
         }
     </style>
@@ -81,7 +85,7 @@
 <body>
     <!-- 页面内容 -->
     <div class="footer">
-        <span>by Charlie Normyan</span> <!-- 最左侧文本 -->
+        <span>abc</span> <!-- 最左侧文本 -->
         <span style="float: right;">V1.0</span> <!-- 最右侧文本 -->
     </div>
 </body>
