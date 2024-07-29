@@ -12,6 +12,7 @@
             height: 100vh;
             background-color: #f0f0f0;
             margin: 0;
+            overflow: hidden; /* 禁止页面滚动 */
         }
         canvas {
             border: 1px solid black;
@@ -34,6 +35,31 @@
             background-color: rgba(0, 0, 0, 0.5);
             border-radius: 50%;
             cursor: pointer;
+            position: relative;
+        }
+        #score {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            font-family: Arial, sans-serif;
+        }
+        #pause {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            font-family: Arial, sans-serif;
+            cursor: pointer;
+        }
+        #restart {
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            font-size: 24px;
+            font-family: Arial, sans-serif;
+            cursor: pointer;
+            display: none;
         }
     </style>
 </head>
@@ -42,11 +68,17 @@
     <div id="control">
         <div id="joystick"></div>
     </div>
+    <div id="score">Score: 0</div>
+    <div id="pause">Pause</div>
+    <div id="restart">Restart</div>
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const joystick = document.getElementById('joystick');
         const control = document.getElementById('control');
+        const scoreDisplay = document.getElementById('score');
+        const pauseButton = document.getElementById('pause');
+        const restartButton = document.getElementById('restart');
 
         const snake = [{x: 400, y: 300}];
         let food = {
@@ -56,6 +88,8 @@
         let score = 0;
         let speed = 2;
         let angle = 0;
+        let gamePaused = false;
+        let gameOver = false;
 
         let dragging = false;
 
@@ -67,10 +101,36 @@
                 const mouseX = event.clientX - rect.left - control.offsetWidth / 2;
                 const mouseY = event.clientY - rect.top - control.offsetHeight / 2;
                 angle = Math.atan2(mouseY, mouseX);
+
+                // 更新摇杆位置
+                joystick.style.left = `${mouseX + control.offsetWidth / 2 - joystick.offsetWidth / 2}px`;
+                joystick.style.top = `${mouseY + control.offsetHeight / 2 - joystick.offsetHeight / 2}px`;
             }
         });
 
+        pauseButton.addEventListener('click', () => {
+            gamePaused = !gamePaused;
+            pauseButton.textContent = gamePaused ? 'Resume' : 'Pause';
+        });
+
+        restartButton.addEventListener('click', () => {
+            snake.length = 1;
+            snake[0] = {x: 400, y: 300};
+            score = 0;
+            scoreDisplay.textContent = `Score: ${score}`;
+            food = {
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height
+            };
+            gameOver = false;
+            restartButton.style.display = 'none';
+            gamePaused = false;
+            pauseButton.textContent = 'Pause';
+        });
+
         function draw() {
+            if (gamePaused || gameOver) return;
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             for (let i = 0; i < snake.length; i++) {
@@ -91,37 +151,4 @@
             let snakeY = snake[0].y + Math.sin(angle) * speed;
 
             if (Math.hypot(snakeX - food.x, snakeY - food.y) < 10) {
-                score++;
-                food = {
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height
-                };
-            } else {
-                snake.pop();
-            }
-
-            let newHead = {
-                x: snakeX,
-                y: snakeY
-            };
-
-            if (snakeX < 0 || snakeY < 0 || snakeX >= canvas.width || snakeY >= canvas.height || collision(newHead, snake)) {
-                clearInterval(game);
-            }
-
-            snake.unshift(newHead);
-        }
-
-        function collision(head, array) {
-            for (let i = 0; i < array.length; i++) {
-                if (Math.hypot(head.x - array[i].x, head.y - array[i].y) < 10) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        let game = setInterval(draw, 1000 / 60);
-    </script>
-</body>
-</html>
+      
