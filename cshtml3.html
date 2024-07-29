@@ -16,13 +16,37 @@
         canvas {
             border: 1px solid black;
         }
+        #control {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 100px;
+            height: 100px;
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #joystick {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <div id="control">
+        <div id="joystick"></div>
+    </div>
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
+        const joystick = document.getElementById('joystick');
+        const control = document.getElementById('control');
 
         const snake = [{x: 400, y: 300}];
         let food = {
@@ -33,14 +57,18 @@
         let speed = 2;
         let angle = 0;
 
-        canvas.addEventListener('mousemove', changeDirection);
+        let dragging = false;
 
-        function changeDirection(event) {
-            const rect = canvas.getBoundingClientRect();
-            const mouseX = event.clientX - rect.left;
-            const mouseY = event.clientY - rect.top;
-            angle = Math.atan2(mouseY - snake[0].y, mouseX - snake[0].x);
-        }
+        joystick.addEventListener('mousedown', () => dragging = true);
+        document.addEventListener('mouseup', () => dragging = false);
+        document.addEventListener('mousemove', (event) => {
+            if (dragging) {
+                const rect = control.getBoundingClientRect();
+                const mouseX = event.clientX - rect.left - control.offsetWidth / 2;
+                const mouseY = event.clientY - rect.top - control.offsetHeight / 2;
+                angle = Math.atan2(mouseY, mouseX);
+            }
+        });
 
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
