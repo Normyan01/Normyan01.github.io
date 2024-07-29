@@ -3,27 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>贪吃蛇游戏</title>
     <style>
-        .footer {
-            position: fixed;
-            left: 0;
-            bottom: 0;
-            width: 100%;
-            background-color: #333; /* 设置背景颜色 */
-            color: white; /* 设置文本颜色 */
-            text-align: center; /* 居中文本 */
-            padding: 10px; /* 添加一些内边距 */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
         }
-        .footer span:last-child {
-            margin-right: 30px; /* 距离最右侧的间距 */
+        canvas {
+            border: 1px solid black;
         }
     </style>
 </head>
 <body>
-    <!-- 页面内容 -->
-    <div class="footer">
-        <span>by Charlie Normyan</span> <!-- 最左侧文本 -->
-        <span style="float: right;">V1.0</span> <!-- 最右侧文本 -->
-    </div>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const snake = [{x: 400, y: 300}];
+        let food = {
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height
+        };
+        let score = 0;
+        let speed = 2;
+        let angle = 0;
+
+        canvas.addEventListener('mousemove', changeDirection);
+
+        function changeDirection(event) {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = event.clientX - rect.left;
+            const mouseY = event.clientY - rect.top;
+            angle = Math.atan2(mouseY - snake[0].y, mouseX - snake[0].x);
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < snake.length; i++) {
+                ctx.fillStyle = (i === 0) ? 'green' : 'white';
+                ctx.beginPath();
+                ctx.arc(snake[i].x, snake[i].y, 10, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = 'red';
+                ctx.stroke();
+            }
+
+            ctx.fillStyle = 'red';
+            ctx.beginPath();
+            ctx.arc(food.x, food.y, 10, 0, Math.PI * 2);
+            ctx.fill();
+
+            let snakeX = snake[0].x + Math.cos(angle) * speed;
+            let snakeY = snake[0].y + Math.sin(angle) * speed;
+
+            if (Math.hypot(snakeX - food.x, snakeY - food.y) < 10) {
+                score++;
+                food = {
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height
+                };
+            } else {
+                snake.pop();
+            }
+
+            let newHead = {
+                x: snakeX,
+                y: snakeY
+            };
+
+            if (snakeX < 0 || snakeY < 0 || snakeX >= canvas.width || snakeY >= canvas.height || collision(newHead, snake)) {
+                clearInterval(game);
+            }
+
+            snake.unshift(newHead);
+        }
+
+        function collision(head, array) {
+            for (let i = 0; i < array.length; i++) {
+                if (Math.hypot(head.x - array[i].x, head.y - array[i].y) < 10) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        let game = setInterval(draw, 1000 / 60);
+    </script>
 </body>
 </html>
