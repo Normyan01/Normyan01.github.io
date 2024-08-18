@@ -1,154 +1,226 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>贪吃蛇游戏</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f0f0f0;
-            margin: 0;
-            overflow: hidden; /* 禁止页面滚动 */
-        }
-        canvas {
-            border: 1px solid black;
-        }
-        #control {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            width: 100px;
-            height: 100px;
-            background-color: rgba(0, 0, 0, 0.1);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        #joystick {
-            width: 40px;
-            height: 40px;
-            background-color: rgba(0, 0, 0, 0.5);
-            border-radius: 50%;
-            cursor: pointer;
-            position: relative;
-        }
-        #score {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            font-size: 24px;
-            font-family: Arial, sans-serif;
-        }
-        #pause {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 24px;
-            font-family: Arial, sans-serif;
-            cursor: pointer;
-        }
-        #restart {
-            position: absolute;
-            top: 60px;
-            right: 20px;
-            font-size: 24px;
-            font-family: Arial, sans-serif;
-            cursor: pointer;
-            display: none;
-        }
-    </style>
+<base href="//static.digdig.io/a3f55fcb054a558a8af1dafbe19641b71497978a/">
+<title>digdig.io</title>
+<meta name="application-name" content="digdig.io">
+<meta name="description" content="Dig and destroy your foes">
+<meta name="msapplication-TileColor" content="#522e00">
+<meta name="theme-color" content="#522e00">
+<script>const versionHash = "a3f55fcb054a558a8af1dafbe19641b71497978a";</script>
+<style>
+body {
+	background-color: #181818;
+}
+</style>
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="viewport" content="user-scalable=no, width=device-width, height=device-height, initial-scale=1, shrink-to-fit=no, viewport-fit=cover">
+<link rel="manifest" href="manifest.json">
+<style>
+	
+:root {
+    --sat: env(safe-area-inset-top);
+    --sar: env(safe-area-inset-right);
+    --sab: env(safe-area-inset-bottom);
+    --sal: env(safe-area-inset-left);
+}
+
+html, body, #canvas {
+	border: 0;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+a, a:visited {
+	color: #3333FF;
+	text-decoration: none
+}
+
+a:hover {
+	color: #6666FF;
+}
+
+#status-container {
+	color: #FFFFFF;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 48pt;
+	font-family: sans-serif;
+	font-weight: bold;
+	cursor: default;
+	text-align: center;
+}
+
+#status-container small {
+	font-size: 50%;
+}
+
+#canvas {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: 100%;
+	height: 100%;
+	width: 100dvw;
+	height: 100dvh;
+	cursor: default;
+}
+
+#canvas[data-fake-landscape="true"] {
+	width: 100vh;
+	height: 100vw;
+	width: 100dvh;
+	height: 100dvw;
+	transform: translate(100vw, 0px) rotate(90deg);
+	transform: translate(100dvw, 0px) rotate(90deg);
+	transform-origin: left top;
+}
+
+#canvasOverlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+}
+
+#textInputContainer {
+	display: none;
+	position: absolute;
+}
+
+#textInput {
+	background-color: transparent;
+	font-family: 'Ubuntu';
+	padding: 0;
+	border: 0;
+	outline: none;
+}
+
+</style>
 </head>
 <body>
-    <canvas id="gameCanvas" width="800" height="600"></canvas>
-    <div id="control">
-        <div id="joystick"></div>
-    </div>
-    <div id="score">Score: 0</div>
-    <div id="pause">Pause</div>
-    <div id="restart">Restart</div>
-    <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const joystick = document.getElementById('joystick');
-        const control = document.getElementById('control');
-        const scoreDisplay = document.getElementById('score');
-        const pauseButton = document.getElementById('pause');
-        const restartButton = document.getElementById('restart');
+<script>
+window.aiptag = window.aiptag || {cmd: []};
+aiptag.cmd.player = aiptag.cmd.player || [];
 
-        const snake = [{x: 400, y: 300}];
-        let food = {
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height
-        };
-        let score = 0;
-        let speed = 2;
-        let angle = 0;
-        let gamePaused = false;
-        let gameOver = false;
+//CMP tool settings
+aiptag.cmp = {
+	show: true,
+	position: "centered",  //centered, bottom
+	button: true,
+	buttonText: "Privacy settings",
+	buttonPosition: "bottom-left" //bottom-left, bottom-right, top-left, top-right
+}
 
-        let dragging = false;
+aiptag.cmd.player.push(function() {
+	aiptag.adplayer = new aipPlayer({
+		AD_WIDTH: 960,
+		AD_HEIGHT: 540,
+		AD_DISPLAY: 'center', //default, fullscreen, center, fill
+		TRUSTED: true,
+		LOADING_TEXT: 'loading advertisement',
+		PREROLL_ELEM: function(){return document.getElementById('preroll')},
+		AIP_COMPLETE: function(state){
+			if(window.aip_complete) window.aip_complete();
+		},
+		AIP_REMOVE: function ()  {
+			if(window.aip_complete) window.aip_complete();
+		}
+	});
+});
+</script>
+<script async src="//api.adinplay.com/libs/aiptag/pub/DGD/digdig.io/tag.min.js"></script>
+<div id="preroll"></div>
+<link href='https://fonts.googleapis.com/css?family=Ubuntu:700' rel='stylesheet' type='text/css'>
+<div id="status-container">
+	<span id="loading">Loading...</span>
+	<span id="unsupported" style="display: none;">
+		Your browser isn't supported<br />
+		<small>
+			try <a href="//chrome.google.com">Google Chrome</a> or <a href="https://www.mozilla.org/en-US/firefox/">Firefox</a><br />
+		</small>
+	</span>
+	<span id="errorDialog" style="display: none;">
+		Error<br />
+		<small>
+			Uninstall any scripts you may have,<br />as they might be interfering with the game<br />
+		</small>
+	</span>
+</div>
 
-        joystick.addEventListener('mousedown', () => dragging = true);
-        document.addEventListener('mouseup', () => dragging = false);
-        document.addEventListener('mousemove', (event) => {
-            if (dragging) {
-                const rect = control.getBoundingClientRect();
-                const mouseX = event.clientX - rect.left - control.offsetWidth / 2;
-                const mouseY = event.clientY - rect.top - control.offsetHeight / 2;
-                angle = Math.atan2(mouseY, mouseX);
+<canvas id="canvas" width="800" height="800" style="display: none;" oncontextmenu="return false;"></canvas>
 
-                // 更新摇杆位置
-                joystick.style.left = `${mouseX + control.offsetWidth / 2 - joystick.offsetWidth / 2}px`;
-                joystick.style.top = `${mouseY + control.offsetHeight / 2 - joystick.offsetHeight / 2}px`;
-            }
-        });
+<div style="font-family:'Ubuntu'">&nbsp;</div>
+<div id="textInputContainer"><input id="textInput" /></div>
 
-        pauseButton.addEventListener('click', () => {
-            gamePaused = !gamePaused;
-            pauseButton.textContent = gamePaused ? 'Resume' : 'Pause';
-        });
+<script>
+	
+window["cp6"] = window["cp6"] || {};
+window["Module"] = window["Module"] || {};
+Module.canvas = document.getElementById("canvas");
 
-        restartButton.addEventListener('click', () => {
-            snake.length = 1;
-            snake[0] = {x: 400, y: 300};
-            score = 0;
-            scoreDisplay.textContent = `Score: ${score}`;
-            food = {
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height
-            };
-            gameOver = false;
-            restartButton.style.display = 'none';
-            gamePaused = false;
-            pauseButton.textContent = 'Pause';
-        });
+function isBrowserSupported(){
+	var canvas = document.createElement("canvas");
+	if(!canvas || !canvas.getContext) return false;
+	
+	//var gl = canvas.getContext("webgl2") || canvas.getContext("experimental-webgl2");
+	//if(!gl) return false;
+	
+	//if(!window["URL"] || !URL.createObjectURL) return false;
+	
+	return true;
+}
 
-        function draw() {
-            if (gamePaused || gameOver) return;
+(function(window, document){
+	if(!isBrowserSupported()){
+		document.getElementById("loading").style.display = "none";
+		document.getElementById("unsupported").style.display = "block";
+		document.getElementById("errorDialog").style.display = "none";
+		return;
+	}
+	
+	
+	// Remove "cp6_web_hash" from url, used during updates to skip cache
+	var url = new URL(window.location);
+	var versionOverride = url.searchParams.get("cp6_web_hash");
+	if(versionOverride){
+		var bases = document.getElementsByTagName("base");
+		if(bases.length > 0){
+			bases[0].href = bases[0].href.replace(versionHash, versionOverride);
+		}
+		
+		url.searchParams.delete("cp6_web_hash");
+		window.history.replaceState({}, document.title, url);
+		window["cp6"]["versionOverride"] = versionOverride;
+	}
+	
+	document.getElementById("canvas").style.display = "block";
+	
+	var gameScript = document.createElement('script');
+	gameScript.async = true;
+	gameScript.type = 'text/javascript';
+	// Loading errors can happen shortly after an update if the file isn't quite ready at static storage when servers are up
+	// Better to just try again instead of hanging. It's still really bad and shouldn't happen though.
+	gameScript.onerror = function(){ setTimeout(function(){ window.location.reload(true); }, 500); };
+	gameScript.onload = function(){};
+	gameScript.src = "client.js";
+	var node = document.getElementsByTagName('script')[0];
+	node.parentNode.insertBefore(gameScript, node);
+})(window, document);
+</script>
 
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            for (let i = 0; i < snake.length; i++) {
-                ctx.fillStyle = (i === 0) ? 'green' : 'white';
-                ctx.beginPath();
-                ctx.arc(snake[i].x, snake[i].y, 10, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.strokeStyle = 'red';
-                ctx.stroke();
-            }
-
-            ctx.fillStyle = 'red';
-            ctx.beginPath();
-            ctx.arc(food.x, food.y, 10, 0, Math.PI * 2);
-            ctx.fill();
-
-            let snakeX = snake[0].x + Math.cos(angle) * speed;
-            let snakeY = snake[0].y + Math.sin(angle) * speed;
-
-            if (Math.hypot(snakeX - food.x, snakeY - food.y) < 10) {
-      
+</body>
+</html>
