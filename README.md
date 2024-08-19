@@ -13,6 +13,7 @@
 ### [点击此处](https://normyan01.github.io/cp) 一些有趣的
 ### [点击此处](https://normyan01.github.io/wp) 网盘
 ### [点击此处](https://normyan01.github.io/js) 一些事
+### [点击此处](https://normyan01.github.io/bd)测显卡
 
 <html lang="en">
 <head>
