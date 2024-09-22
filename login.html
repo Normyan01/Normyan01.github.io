@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Normyan01</title>
+    <script>
+        // Check if already logged in
+        if (localStorage.getItem('isLoggedIn')) {
+            window.location.href = "index.html"; // Redirect to homepage if already logged in
+        }
+
+        // Function to handle login
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Basic check (can be replaced by a real authentication API call)
+            if (username === "admin" && password === "password123") {
+                localStorage.setItem('isLoggedIn', true); // Store login status in local storage
+                window.location.href = "index.html"; // Redirect to homepage
+            } else {
+                alert("Invalid username or password!");
+            }
+        }
+    </script>
+</head>
+<body>
+    <h2>Login</h2>
+    <form onsubmit="event.preventDefault(); login();">
+        <label for="username">Username:</label><br>
+        <input type="text" id="username" name="username" required><br><br>
+        <label for="password">Password:</label><br>
+        <input type="password" id="password" name="password" required><br><br>
+        <button type="submit">Login</button>
+    </form>
+</body>
+</html>
