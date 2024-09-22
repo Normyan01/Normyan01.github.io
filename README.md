@@ -1,4 +1,30 @@
 # Normyan01.github.io  ![image](https://github.com/Normyan01/Normyan01.github.io/assets/169884063/2b1907ef-d9ed-4f97-8dba-4e2b7f1aa811)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage - Normyan01</title>
+    <script>
+        // Check if user is logged in
+        if (!localStorage.getItem('isLoggedIn')) {
+            window.location.href = "login.html"; // Redirect to login page if not logged in
+        }
+
+        // Function to handle logout
+        function logout() {
+            localStorage.removeItem('isLoggedIn'); // Clear login status
+            window.location.href = "login.html"; // Redirect to login page
+        }
+    </script>
+</head>
+<body>
+    <h1>Welcome to Normyan01's Website</h1>
+    <p>Only logged in users can see this content!</p>
+    <button onclick="logout()">Logout</button>
+</body>
+</html>
+
 <html>
     <body>
         <p style="color:red;">请勿传播！！！</p>
