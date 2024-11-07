@@ -1,36 +1,56 @@
-# Normyan01.github.io  ![image](https://github.com/Normyan01/Normyan01.github.io/assets/169884063/2b1907ef-d9ed-4f97-8dba-4e2b7f1aa811)
-<!DOCTYPE html>
-<html lang="en">
+# Normyan01.github.io 
+
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homepage - Normyan01</title>
-    <script>
-        // Check if user is logged in
-        if (!localStorage.getItem('isLoggedIn')) {
-            window.location.href = "login.html"; // Redirect to login page if not logged in
+    <title>倒计时</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 20px;
+            margin-top: 20px;
+            text-align: center;
         }
 
-        // Function to handle logout
-        function logout() {
-            localStorage.removeItem('isLoggedIn'); // Clear login status
-            window.location.href = "login.html"; // Redirect to login page
+        #time-display {
+            font-size: 50px;   /* 大号字体 */
+            color: red;        /* 红色文字 */
         }
-    </script>
+    </style>
 </head>
 <body>
-    <h1>Welcome to Normyan01's Website</h1>
-    <p>Only logged in users can see this content!</p>
-    <button onclick="logout()">Logout</button>
+
+    <p>距离发还有 <span id="time-display">加载中...</span></p>
+
+    <script>
+        function updateCountdown() {
+            // 设置目标时间（2024年11月8日8:50 UTC+8）
+            const targetDate = new Date('2024-11-08T08:50:00+08:00');
+            
+            // 获取当前时间
+            const now = new Date();
+            
+            // 计算时间差（毫秒）
+            const timeDifference = targetDate - now;
+            
+            // 将毫秒转换为秒和毫秒
+            const seconds = Math.floor(timeDifference / 1000);
+            const milliseconds = timeDifference % 1000;
+
+            // 更新页面显示
+            const timeDisplay = document.getElementById('time-display');
+            timeDisplay.textContent = `${seconds}秒 ${milliseconds}毫秒`;
+        }
+
+        // 每100毫秒更新一次
+        setInterval(updateCountdown, 100);
+    </script>
+
 </body>
 </html>
 
-<html>
-    <body>
-        <p style="color:red;">请勿传播！！！</p>
-    </body>
-</html>       
-
+![image](https://github.com/Normyan01/Normyan01.github.io/assets/169884063/2b1907ef-d9ed-4f97-8dba-4e2b7f1aa811)
 ## [点击此处](https://ddkg.top)**访问院长网站！！！**    
 ## [点击此处](https://bjjh201703.com)一个不太好的东西
 
