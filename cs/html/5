@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>光舞背景效果</title>
+  <style>
+    /* 设置页面为黑色背景，铺满整个页面 */
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #000;
+      height: 100%;
+    }
+
+    /* Canvas全屏 */
+    canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // 设置颜色数组，随机选择
+    const colors = ['#ff5f5f', '#00c2ff', '#ff00d4', '#7cff00', '#fff700'];
+
+    // 随机生成曲线
+    function drawRandomCurve() {
+      // 设置起始位置为屏幕随机位置
+      let startX = Math.random() * canvas.width;
+      let startY = Math.random() * canvas.height;
+
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+
+      // 绘制随机贝塞尔曲线
+      for (let i = 0; i < 3; i++) {
+        let cp1X = Math.random() * canvas.width;
+        let cp1Y = Math.random() * canvas.height;
+        let cp2X = Math.random() * canvas.width;
+        let cp2Y = Math.random() * canvas.height;
+        let endX = Math.random() * canvas.width;
+        let endY = Math.random() * canvas.height;
+
+        ctx.bezierCurveTo(cp1X, cp1Y, cp2X, cp2Y, endX, endY);
+      }
+
+      // 设置随机线条颜色和透明度
+      ctx.strokeStyle = colors[Math.floor(Math.random() * colors.length)];
+      ctx.globalAlpha = 0.3;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    // 清除并重绘曲线，模拟动态效果
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < 5; i++) {
+        drawRandomCurve();
+      }
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    // 窗口调整时重置画布大小
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
+
