@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设备信息展示</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .info {
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>当前设备信息</h1>
+    <div class="info"><strong>操作系统:</strong> <span id="os"></span></div>
+    <div class="info"><strong>浏览器:</strong> <span id="browser"></span></div>
+    <div class="info"><strong>浏览器版本:</strong> <span id="browser-version"></span></div>
+    <div class="info"><strong>内网 IP:</strong> <span id="local-ip"></span></div>
+    <div class="info"><strong>外网 IP:</strong> <span id="public-ip"></span></div>
+    <div class="info"><strong>设备分辨率:</strong> <span id="resolution"></span></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ua-parser-js/0.7.28/ua-parser.min.js"></script>
+    <script>
+        // 获取设备信息
+        function getDeviceInfo() {
+            // 操作系统和浏览器信息
+            const parser = new UAParser();
+            const result = parser.getResult();
+            
+            document.getElementById('os').textContent = result.os.name + " " + result.os.version;
+            document.getElementById('browser').textContent = result.browser.name;
+            document.getElementById('browser-version').textContent = result.browser.version;
+
+            // 设备分辨率
+            document.getElementById('resolution').textContent = window.innerWidth + 'x' + window.innerHeight;
+
+            // 获取内网 IP 地址（通过 WebRTC）
+            let localIP = '无法获取';
+            const rtc = new RTCPeerConnection({iceServers: []});
+            rtc.createDataChannel('');
+            rtc.createOffer().then(offer => rtc.setLocalDescription(offer));
+            rtc.onicecandidate = (event) => {
+                if (event.candidate) {
+                    const ip = event.candidate.candidate.split(' ')[4];
+                    localIP = ip;
+                    document.getElementById('local-ip').textContent = ip;
+                    rtc.close();
+                }
+            };
+
+            // 获取外网 IP 地址
+            fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('public-ip').textContent = data.ip;
+                })
+                .catch(err => {
+                    document.getElementById('public-ip').textContent = '无法获取';
+                });
+        }
+
+        // 页面加载完成后显示信息
+        window.onload = getDeviceInfo;
+    </script>
+</body>
+</html>
