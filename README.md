@@ -1,51 +1,69 @@
-# Normyan01.github.io 
-
-<html lang="zh-CN">
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>倒计时</title>
+    <title>Login</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .login-container {
+            text-align: center;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        input {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 18px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            font-size: 18px;
+            background-color: #5cb85c;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #4cae4c;
+        }
+        .message {
             font-size: 20px;
             margin-top: 20px;
-            text-align: center;
-        }
-
-        #time-display {
-            font-size: 50px;   /* 大号字体 */
-            color: red;        /* 红色文字 */
         }
     </style>
 </head>
 <body>
 
-    <p>距离发成绩还有 <span id="time-display">加载中...</span></p>
+    <div class="login-container">
+        <h1>Login</h1>
+        <input type="text" id="username" placeholder="账号" />
+        <input type="password" id="password" placeholder="密码" />
+        <button onclick="validateLogin()">登录</button>
+        <div class="message" id="message"></div>
+    </div>
 
-    <script>
-        function updateCountdown() {
-            // 设置目标时间（2024年11月8日8:50 UTC+8）
-            const targetDate = new Date('2024-11-08T08:50:00+08:00');
-            
-            // 获取当前时间
-            const now = new Date();
-            
-            // 计算时间差（毫秒）
-            const timeDifference = targetDate - now;
-            
-            // 将毫秒转换为秒和毫秒
-            const seconds = Math.floor(timeDifference / 1000);
-            const milliseconds = timeDifference % 1000;
-
-            // 更新页面显示
-            const timeDisplay = document.getElementById('time-display');
-            timeDisplay.textContent = `${seconds}秒 ${milliseconds}毫秒`;
-        }
-
-        // 每100毫秒更新一次
-        setInterval(updateCountdown, 100);
-    </script>
+    <!-- Link to external JavaScript file -->
+    <script src="script1.js"></script>
 
 </body>
 </html>
