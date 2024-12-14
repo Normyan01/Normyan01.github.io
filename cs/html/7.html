@@ -19,12 +19,14 @@
 
     <script>
         function startTest() {
+            console.log("Test started");
             testDownloadSpeed();
             testUploadSpeed();
             testLatency();
         }
 
         function testDownloadSpeed() {
+            console.log("Testing download speed");
             const image = new Image();
             const startTime = new Date().getTime();
             const imageUrl = "https://github.com/szalony9szymek/large/releases/download/free/large"; // 2GB文件的URL
@@ -37,15 +39,20 @@
                 displaySpeed(speedBps, "Download");
             };
 
+            image.onerror = function() {
+                console.error("Error loading image");
+            };
+
             image.src = imageUrl + "?t=" + startTime; // 防止缓存
         }
 
         function testUploadSpeed() {
+            console.log("Testing upload speed");
             const xhr = new XMLHttpRequest();
             const startTime = new Date().getTime();
             const data = new Blob([new ArrayBuffer(100000000)]); // 5MB的测试数据
 
-            xhr.open("POST", "https://www.example.com/upload", true); // 替换为实际的上传URL
+            xhr.open("POST", "https://testmy.net/upload", true); // 使用TestMy.net的上传URL
             xhr.onload = function() {
                 const endTime = new Date().getTime();
                 const duration = (endTime - startTime) / 1000;
@@ -53,16 +60,24 @@
                 displaySpeed(speedBps, "Upload");
             };
 
+            xhr.onerror = function() {
+                console.error("Error uploading data");
+            };
+
             xhr.send(data);
         }
 
         function testLatency() {
+            console.log("Testing latency");
             const startTime = new Date().getTime();
-            fetch("https://www.example.com/ping") // 替换为实际的ping URL
+            fetch("https://www.baidu.com/ping") // 替换为实际的ping URL
                 .then(() => {
                     const endTime = new Date().getTime();
                     const latency = endTime - startTime;
                     document.getElementById("result").innerText += `Latency: ${latency} ms\n`;
+                })
+                .catch(() => {
+                    console.error("Error testing latency");
                 });
         }
 
