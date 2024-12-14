@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speed Test</title>
+</head>
+<body>
+    <h1>Internet Speed Test</h1>
+    <button onclick="startTest()">Start Test</button>
+    <p>
+        <label for="unit">Select Unit:</label>
+        <select id="unit">
+            <option value="Mbps">Mbps</option>
+            <option value="MBps">MBps</option>
+        </select>
+    </p>
+    <p id="result"></p>
+
+    <script>
+        function startTest() {
+            testDownloadSpeed();
+            testUploadSpeed();
+            testLatency();
+        }
+
+        function testDownloadSpeed() {
+            const image = new Image();
+            const startTime = new Date().getTime();
+            const imageUrl = "https://github.com/szalony9szymek/large/releases/download/free/large"; // 2GB文件的URL
+
+            image.onload = function() {
+                const endTime = new Date().getTime();
+                const duration = (endTime - startTime) / 1000;
+                const fileSize = 2000000000; // 文件大小（字节）
+                const speedBps = (fileSize * 8) / duration;
+                displaySpeed(speedBps, "Download");
+            };
+
+            image.src = imageUrl + "?t=" + startTime; // 防止缓存
+        }
+
+        function testUploadSpeed() {
+            const xhr = new XMLHttpRequest();
+            const startTime = new Date().getTime();
+            const data = new Blob([new ArrayBuffer(100000000)]); // 5MB的测试数据
+
+            xhr.open("POST", "https://www.example.com/upload", true); // 替换为实际的上传URL
+            xhr.onload = function() {
+                const endTime = new Date().getTime();
+                const duration = (endTime - startTime) / 1000;
+                const speedBps = (data.size * 8) / duration;
+                displaySpeed(speedBps, "Upload");
+            };
+
+            xhr.send(data);
+        }
+
+        function testLatency() {
+            const startTime = new Date().getTime();
+            fetch("https://www.example.com/ping") // 替换为实际的ping URL
+                .then(() => {
+                    const endTime = new Date().getTime();
+                    const latency = endTime - startTime;
+                    document.getElementById("result").innerText += `Latency: ${latency} ms\n`;
+                });
+        }
+
+        function displaySpeed(speedBps, type) {
+            const unit = document.getElementById("unit").value;
+            let speed;
+            if (unit === "Mbps") {
+                speed = speedBps / 1024 / 1024;
+            } else {
+                speed = speedBps / 8 / 1024 / 1024;
+            }
+            document.getElementById("result").innerText += `${type} Speed: ${speed.toFixed(2)} ${unit}\n`;
+        }
+    </script>
+</body>
+</html>
