@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Interactive 3D Birthday Celebration">
+    <title>Happy Birthday Emma</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Dancing+Script:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(168, 85, 247, 0.5);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(168, 85, 247, 0.8);
+        }
+        
+        body:hover::-webkit-scrollbar {
+            opacity: 1;
+        }
+        
+        .container {
+            scroll-behavior: smooth;
+            height: 100vh;
+            overflow-y: scroll;
+            overflow-x: hidden;
+        }
+        
+        section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 2rem;
+        }
+        
+        /* Particle Background */
+        .particle-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        
+        /* Typography */
+        .cursive-title {
+            font-family: 'Great Vibes', cursive;
+            font-weight: 400;
+        }
+        
+        .cursive-body {
+            font-family: 'Dancing Script', cursive;
+            font-weight: 400;
+        }
+        
+        /* Screen 1: Birthday Title */
+        #screen1 {
+            text-align: center;
+            z-index: 10;
+        }
+        
+        .title-main {
+            font-size: clamp(3rem, 15vw, 8rem);
+            background: linear-gradient(45deg, #ff6b9d, #c44569, #ffa500, #00d2ff, #a8ff78);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glow 2s ease-in-out infinite;
+            margin-bottom: 1rem;
+        }
+        
+        .title-name {
+            font-size: clamp(2rem, 10vw, 6rem);
+            color: #00d2ff;
+            text-shadow: 0 0 30px #00d2ff, 0 0 60px #00d2ff;
+        }
+        
+        /* Screen 2: Wishes */
+        .wish-text {
+            font-size: clamp(1.5rem, 4vw, 3rem);
+            text-align: center;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.6), 0 0 40px rgba(255, 255, 255, 0.3);
+            margin: 2rem 0;
+            line-height: 1.6;
+            max-width: 900px;
+        }
+        
+        /* Screen 3: Game Section */
+        #screen3 {
+            flex-direction: column;
+        }
+        
+        .game-container {
+            width: 100%;
+            max-width: 1400px;
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+        
+        @media (max-width: 1024px) {
+            .game-container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+        }
+        
+        .controls-panel {
+            background: rgba(17, 24, 39, 0.7);
+            border: 1px solid rgba(107, 114, 128, 0.5);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+        
+        .canvas-container {
+            width: 100%;
+            height: 600px;
+            position: relative;
+        }
+        
+        @media (max-width: 768px) {
+            .canvas-container {
+                height: 500px;
+            }
+        }
+        
+        #cake-canvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 1rem;
+        }
+        
+        .wish-overlay {
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            text-align: center;
+            width: 90%;
+            pointer-events: none;
+        }
+        
+        .wish-display {
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            color: #fff;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.9), 
+                         0 0 60px rgba(168, 85, 247, 0.6),
+                         0 0 90px rgba(236, 72, 153, 0.4);
+            line-height: 1.6;
+            animation: wishAppear 1s ease-out forwards;
+        }
+        
+        .final-message {
+            font-size: clamp(2rem, 5vw, 4rem);
+            background: linear-gradient(135deg, #a855f7, #ec4899, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 40px rgba(168, 85, 247, 0.8));
+            animation: wishAppear 1s ease-out forwards;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: rgba(17, 24, 39, 0.9);
+            border: 2px solid #a855f7;
+            border-radius: 0.75rem;
+            color: #fff;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            margin-bottom: 1rem;
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+            transition: all 0.3s;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #ec4899;
+            box-shadow: 0 0 30px rgba(236, 72, 153, 0.5);
+        }
+        
+        input::placeholder {
+            color: #6b7280;
+        }
+        
+        button {
+            width: 100%;
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 0.75rem;
+            touch-action: manipulation;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, #a855f7, #ec4899);
+            color: #fff;
+            box-shadow: 0 0 30px rgba(236, 72, 153, 0.5);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 40px rgba(236, 72, 153, 0.7);
+        }
+        
+        .btn-blow {
+            background: linear-gradient(to right, #f97316, #dc2626);
+            color: #fff;
+            box-shadow: 0 0 30px rgba(249, 115, 22, 0.6);
+        }
+        
+        .btn-blow:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 0 40px rgba(249, 115, 22, 0.8);
+        }
+        
+        .btn-blow:disabled {
+            background: #374151;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        
+        .btn-reset {
+            background: rgba(31, 41, 55, 0.9);
+            border: 2px solid #4b5563;
+            color: #fff;
+        }
+        
+        .btn-reset:hover {
+            border-color: #3b82f6;
+            background: rgba(31, 41, 55, 1);
+        }
+        
+        .preset-btn {
+            padding: 0.5rem 1rem;
+            background: rgba(31, 41, 55, 0.9);
+            border: 1px solid #4b5563;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            color: #d1d5db;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-block;
+            margin: 0.25rem;
+        }
+        
+        .preset-btn:hover {
+            border-color: #a855f7;
+            color: #fff;
+            background: rgba(31, 41, 55, 1);
+        }
+        
+        .instructions {
+            background: rgba(17, 24, 39, 0.7);
+            border: 1px solid rgba(107, 114, 128, 0.5);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+        
+        .instruction-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: #d1d5db;
+            line-height: 1.5;
+        }
+        
+        .instruction-item span {
+            font-size: 1.5rem;
+            margin-right: 0.75rem;
+        }
+        
+        /* Screen 4: Final */
+        .final-title {
+            font-size: clamp(3rem, 10vw, 7rem);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 40px rgba(102, 126, 234, 0.6));
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .final-subtitle {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            color: #d1d5db;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* Animations */
+        @keyframes glow {
+            0%, 100% { filter: brightness(1) drop-shadow(0 0 20px currentColor); }
+            50% { filter: brightness(1.3) drop-shadow(0 0 40px currentColor); }
+        }
+        
+        @keyframes wishAppear {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes wishFade {
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+        }
+        
+        .fade-out {
+            animation: wishFade 1s ease-out forwards;
+        }
+        
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 24px;
+            height: 40px;
+            border: 2px solid #fff;
+            border-radius: 20px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 8px;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+        
+        .scroll-dot {
+            width: 4px;
+            height: 12px;
+            background: #fff;
+            border-radius: 4px;
+            animation: float 2s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(8px); }
+        }
+        
+        /* Loading */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s;
+        }
+        
+        .loading-text {
+            font-size: 2rem;
+            color: #a855f7;
+            animation: glow 1.5s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">
+        <div class="loading-text cursive-title">Loading Magic... ✨</div>
+    </div>
+    
+    <div class="particle-bg" id="particleBg"></div>
+    
+    <div class="container" id="mainContainer">
+        <!-- Screen 1: Happy Birthday -->
+        <section id="screen1">
+            <div>
+                <h1 class="title-main cursive-title">Happy Birthday</h1>
+                <h2 class="title-name cursive-title">Alisia</h2>
+                <div class="scroll-indicator">
+                    <div class="scroll-dot"></div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Screen 2: Wishes -->
+        <section id="screen2">
+            <div style="max-width: 1000px;">
+                <p class="wish-text cursive-body" data-delay="0">
+                    On this special day, may your smile shine as bright as the sun
+                </p>
+                <p class="wish-text cursive-body" data-delay="0.3">
+                    May all the beauty and joy surround you always
+                </p>
+                <p class="wish-text cursive-body" data-delay="0.6">
+                    May every dream you hold blossom in its perfect time
+                </p>
+                <p class="wish-text cursive-body" data-delay="0.9">
+                    Grateful for every moment shared with you
+                </p>
+            </div>
+        </section>
+        
+        <!-- Screen 3: 3D Cake Game -->
+        <section id="screen3">
+            <div class="game-container">
+                <!-- Left Controls -->
+                <div class="controls-panel">
+                    <div id="wishInputSection">
+                        <h3 class="cursive-title" style="font-size: 2rem; text-align: center; margin-bottom: 1.5rem; background: linear-gradient(to right, #a855f7, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                            Make a Wish
+                        </h3>
+                        
+                        <input type="text" id="wishInput" placeholder="Type your wish here...">
+                        
+                        <button class="btn-primary" onclick="confirmWish()">
+                            Confirm Wish ✨
+                        </button>
+                        
+                        <div style="margin-top: 1rem;">
+                            <p style="color: #9ca3af; font-size: 0.875rem; font-weight: 500; text-align: center; margin-bottom: 0.75rem;">
+                                QUICK SELECT
+                            </p>
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center;">
+                                <button class="preset-btn" onclick="selectPreset('Ace all exams')">Ace all exams</button>
+                                <button class="preset-btn" onclick="selectPreset('Stay happy every day')">Stay happy every day</button>
+                                <button class="preset-btn" onclick="selectPreset('Dreams come true')">Dreams come true</button>
+                                <button class="preset-btn" onclick="selectPreset('Health and joy')">Health and joy</button>
+                                <button class="preset-btn" onclick="selectPreset('Adventure awaits')">Adventure awaits</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="blowSection" style="display: none;">
+                        <button class="btn-blow" id="blowBtn" onclick="blowCandles()">
+                            🌬️ Blow Out Candles
+                        </button>
+                        
+                        <button class="btn-reset" onclick="resetGame()">
+                            🔄 Start Over
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Center: 3D Cake -->
+                <div class="canvas-container">
+                    <canvas id="cake-canvas"></canvas>
+                    <div class="wish-overlay" id="wishOverlay"></div>
+                </div>
+                
+                <!-- Right Instructions -->
+                <div class="instructions">
+                    <h4 class="cursive-title" style="font-size: 1.5rem; color: #a855f7; margin-bottom: 1rem;">
+                        How to Play
+                    </h4>
+                    
+                    <div class="instruction-item">
+                        <span>1️⃣</span>
+                        <p>Type your birthday wish or choose a preset</p>
+                    </div>
+                    
+                    <div class="instruction-item">
+                        <span>2️⃣</span>
+                        <p>Watch your wish appear on the candles</p>
+                    </div>
+                    
+                    <div class="instruction-item">
+                        <span>3️⃣</span>
+                        <p>Blow out the candles to make it come true</p>
+                    </div>
+                    
+                    <div class="instruction-item">
+                        <span>✨</span>
+                        <p>Watch the magic unfold!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Screen 4: Final Message -->
+        <section id="screen4">
+            <div>
+                <h2 class="final-title cursive-title">May You Always Be Happy</h2>
+                <p class="final-subtitle cursive-body">✨ Happy Birthday, Dear Friend ✨</p>
+            </div>
+        </section>
+    </div>
+    
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <script>
+        // Global variables
+        let scene, camera, renderer, cake, candles = [], flames = [], smokeParticles = [];
+        let candlesLit = true;
+        let currentWish = '';
+        let isBlowing = false;
+        
+        // Particle system
+        function createParticles() {
+            const particleBg = document.getElementById('particleBg');
+            const particleCount = window.innerWidth < 768 ? 50 : 100;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                const size = Math.random() * 3 + 1;
+                const colors = ['#ff6b9d', '#ffa500', '#00d2ff', '#a8ff78', '#f093fb'];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.backgroundColor = color;
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.opacity = Math.random() * 0.5 + 0.2;
+                particle.style.boxShadow = `0 0 ${size * 3}px ${color}`;
+                
+                const duration = 10 + Math.random() * 20;
+                const delay = Math.random() * 5;
+                particle.style.animation = `particleFloat ${duration}s ease-in-out infinite`;
+                particle.style.animationDelay = `${delay}s`;
+                
+                particleBg.appendChild(particle);
+            }
+        }
+        
+        // Add particle animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes particleFloat {
+                0% { transform: translate(0, 0) rotate(0deg); opacity: 0.2; }
+                25% { transform: translate(30px, -30px) rotate(90deg); opacity: 0.6; }
+                50% { transform: translate(-15px, -60px) rotate(180deg); opacity: 0.4; }
+                75% { transform: translate(-30px, -30px) rotate(270deg); opacity: 0.7; }
+                100% { transform: translate(0, 0) rotate(360deg); opacity: 0.2; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Init Three.js scene
+        function initThreeJS() {
+            const canvas = document.getElementById('cake-canvas');
+            const container = canvas.parentElement;
+            
+            // Scene
+            scene = new THREE.Scene();
+            
+            // Camera
+            camera = new THREE.PerspectiveCamera(
+                50,
+                container.clientWidth / container.clientHeight,
+                0.1,
+                1000
+            );
+            camera.position.set(0, 3, 8);
+            camera.lookAt(0, 1, 0);
+            
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ 
+                canvas: canvas, 
+                antialias: true, 
+                alpha: true 
+            });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            
+            // Lights
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+            
+            const mainLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            mainLight.position.set(5, 10, 5);
+            mainLight.castShadow = true;
+            scene.add(mainLight);
+            
+            const fillLight = new THREE.PointLight(0xff9999, 0.5);
+            fillLight.position.set(-3, 5, 3);
+            scene.add(fillLight);
+            
+            // Create cake
+            createCake();
+            
+            // Create candles
+            createCandles();
+            
+            // Animation loop
+            animate();
+            
+            // Handle resize
+            window.addEventListener('resize', onWindowResize);
+        }
+        
+        function createCake() {
+            cake = new THREE.Group();
+            
+            // Bottom tier - with decorative details
+            const bottomGeometry = new THREE.CylinderGeometry(2, 2.2, 0.8, 64);
+            const bottomMaterial = new THREE.MeshPhongMaterial({ 
+                color: 0xffc0e0,
+                shininess: 30,
+                specular: 0x444444
+            });
+            const bottomTier = new THREE.Mesh(bottomGeometry, bottomMaterial);
+            bottomTier.position.y = 0.4;
+            bottomTier.castShadow = true;
+            bottomTier.receiveShadow = true;
+            cake.add(bottomTier);
+            
+            // Add decorative pearls to bottom tier
+            for (let i = 0; i < 24; i++) {
+                const angle = (i / 24) * Math.PI * 2;
+                const pearl = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.06, 16, 16),
+                    new THREE.MeshPhongMaterial({ 
+                        color: 0xffffff,
+                        shininess: 100,
+                        specular: 0xffffff
+                    })
+                );
+                const radius = 2.1;
+                pearl.position.set(
+                    Math.cos(angle) * radius,
+                    0.4 + Math.sin(i * 0.5) * 0.05,
+                    Math.sin(angle) * radius
+                );
+                cake.add(pearl);
+            }
+            
+            // Frosting - bottom with drips
+            const frostingBottom = new THREE.Mesh(
+                new THREE.CylinderGeometry(2.05, 2.25, 0.12, 64),
+                new THREE.MeshPhongMaterial({ 
+                    color: 0xffeaa7,
+                    shininess: 80,
+                    specular: 0x888888
+                })
+            );
+            frostingBottom.position.y = 0.86;
+            cake.add(frostingBottom);
+            
+            // Add frosting drips
+            for (let i = 0; i < 16; i++) {
+                const angle = (i / 16) * Math.PI * 2;
+                const drip = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.03, 0.05, 0.15, 12),
+                    new THREE.MeshPhongMaterial({ 
+                        color: 0xffeaa7,
+                        shininess: 80
+                    })
+                );
+                const radius = 2.15;
+                drip.position.set(
+                    Math.cos(angle) * radius,
+                    0.75,
+                    Math.sin(angle) * radius
+                );
+                cake.add(drip);
+            }
+            
+            // Middle tier with texture
+            const middleGeometry = new THREE.CylinderGeometry(1.5, 1.7, 0.7, 64);
+            const middleMaterial = new THREE.MeshPhongMaterial({ 
+                color: 0xd8b0ff,
+                shininess: 30,
+                specular: 0x444444
+            });
+            const middleTier = new THREE.Mesh(middleGeometry, middleMaterial);
+            middleTier.position.y = 1.25;
+            middleTier.castShadow = true;
+            middleTier.receiveShadow = true;
+            cake.add(middleTier);
+            
+            // Middle tier decorations - golden dots
+            for (let i = 0; i < 18; i++) {
+                const angle = (i / 18) * Math.PI * 2;
+                const dot = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.05, 16, 16),
+                    new THREE.MeshPhongMaterial({ 
+                        color: 0xffd700,
+                        shininess: 100,
+                        specular: 0xffff00
+                    })
+                );
+                const radius = 1.6;
+                dot.position.set(
+                    Math.cos(angle) * radius,
+                    1.25 + Math.sin(i * 0.7) * 0.04,
+                    Math.sin(angle) * radius
+                );
+                cake.add(dot);
+            }
+            
+            // Frosting - middle
+            const frostingMiddle = new THREE.Mesh(
+                new THREE.CylinderGeometry(1.55, 1.75, 0.12, 64),
+                new THREE.MeshPhongMaterial({ 
+                    color: 0xffeaa7,
+                    shininess: 80,
+                    specular: 0x888888
+                })
+            );
+            frostingMiddle.position.y = 1.66;
+            cake.add(frostingMiddle);
+            
+            // Middle drips
+            for (let i = 0; i < 12; i++) {
+                const angle = (i / 12) * Math.PI * 2;
+                const drip = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.025, 0.04, 0.12, 12),
+                    new THREE.MeshPhongMaterial({ 
+                        color: 0xffeaa7,
+                        shininess: 80
+                    })
+                );
+                const radius = 1.65;
+                drip.position.set(
+                    Math.cos(angle) * radius,
+                    1.58,
+                    Math.sin(angle) * radius
+                );
+                cake.add(drip);
+            }
+            
+            // Top tier
+            const topGeometry = new THREE.CylinderGeometry(1, 1.2, 0.6, 64);
+            const topMaterial = new THREE.MeshPhongMaterial({ 
+                color: 0xa0d8ff,
+                shininess: 30,
+                specular: 0x444444
+            });
+            const topTier = new THREE.Mesh(topGeometry, topMaterial);
+            topTier.position.y = 2;
+            topTier.castShadow = true;
+            topTier.receiveShadow = true;
+            cake.add(topTier);
+            
+            // Top tier decorations - pink dots
+            for (let i = 0; i < 14; i++) {
+                const angle = (i / 14) * Math.PI * 2;
+                const dot = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.04, 16, 16),
+                    new THREE.MeshPhongMaterial({ 
+                        color: 0xffb6c1,
+                        shininess: 100,
+                        specular: 0xffc0cb
+                    })
+                );
+                const radius = 1.1;
+                dot.position.set(
+                    Math.cos(angle) * radius,
+                    2 + Math.sin(i * 0.9) * 0.03,
+                    Math.sin(angle) * radius
+                );
+                cake.add(dot);
+            }
+            
+            // Frosting - top
+            const frostingTop = new THREE.Mesh(
+                new THREE.CylinderGeometry(1.05, 1.25, 0.12, 64),
+                new THREE.MeshPhongMaterial({ 
+                    color: 0xffeaa7,
+                    shininess: 80,
+                    specular: 0x888888
+                })
+            );
+            frostingTop.position.y = 2.36;
+            cake.add(frostingTop);
+            
+            // Top drips
+            for (let i = 0; i < 10; i++) {
+                const angle = (i / 10) * Math.PI * 2;
+                const drip = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.02, 0.035, 0.1, 12),
+                    new THREE.MeshPhongMaterial({ 
+                        color: 0xffeaa7,
+                        shininess: 80
+                    })
+                );
+                const radius = 1.15;
+                drip.position.set(
+                    Math.cos(angle) * radius,
+                    2.3,
+                    Math.sin(angle) * radius
+                );
+                cake.add(drip);
+            }
+            
+            // Cake plate with rim detail
+            const plateGeometry = new THREE.CylinderGeometry(2.5, 2.5, 0.15, 64);
+            const plateMaterial = new THREE.MeshPhongMaterial({ 
+                color: 0xc0c0c0,
+                shininess: 120,
+                specular: 0xffffff
+            });
+            const plate = new THREE.Mesh(plateGeometry, plateMaterial);
+            plate.position.y = -0.025;
+            plate.receiveShadow = true;
+            cake.add(plate);
+            
+            // Plate rim
+            const rimGeometry = new THREE.TorusGeometry(2.5, 0.08, 16, 64);
+            const rimMaterial = new THREE.MeshPhongMaterial({ 
+                color: 0xa0a0a0,
+                shininess: 100,
+                specular: 0xffffff
+            });
+            const rim = new THREE.Mesh(rimGeometry, rimMaterial);
+            rim.rotation.x = Math.PI / 2;
+            rim.position.y = 0.05;
+            cake.add(rim);
+            
+            scene.add(cake);
+        }
+        
+        function createCandles() {
+            const candlePositions = [
+                { x: -0.5, z: 0, number: '1', color: 0x4da6ff },
+                { x: 0.5, z: 0, number: '6', color: 0xff69b4 }
+            ];
+            
+            candlePositions.forEach(pos => {
+                const candleGroup = new THREE.Group();
+                
+                // Candle body with higher detail
+                const candleGeometry = new THREE.CylinderGeometry(0.09, 0.09, 0.65, 32);
+                const candleMaterial = new THREE.MeshPhongMaterial({ 
+                    color: pos.color,
+                    shininess: 40,
+                    specular: 0x666666
+                });
+                const candleBody = new THREE.Mesh(candleGeometry, candleMaterial);
+                candleBody.position.y = 2.675;
+                candleBody.castShadow = true;
+                candleGroup.add(candleBody);
+                
+                // Wax texture - spiral stripes
+                for (let i = 0; i < 12; i++) {
+                    const stripe = new THREE.Mesh(
+                        new THREE.TorusGeometry(0.092, 0.008, 8, 32),
+                        new THREE.MeshPhongMaterial({ 
+                            color: 0xffffff,
+                            transparent: true,
+                            opacity: 0.3,
+                            shininess: 60
+                        })
+                    );
+                    stripe.rotation.x = Math.PI / 2;
+                    stripe.position.y = 2.35 + (i * 0.055);
+                    candleGroup.add(stripe);
+                }
+                
+                // Melted wax drips (3 per candle)
+                for (let i = 0; i < 3; i++) {
+                    const angle = (i / 3) * Math.PI * 2;
+                    const dripGeometry = new THREE.CylinderGeometry(0.015, 0.03, 0.15 + Math.random() * 0.1, 12);
+                    const dripMaterial = new THREE.MeshPhongMaterial({ 
+                        color: pos.color,
+                        shininess: 60,
+                        transparent: true,
+                        opacity: 0.8
+                    });
+                    const drip = new THREE.Mesh(dripGeometry, dripMaterial);
+                    drip.position.set(
+                        Math.cos(angle) * 0.08,
+                        2.5 + Math.random() * 0.3,
+                        Math.sin(angle) * 0.08
+                    );
+                    drip.rotation.z = (Math.random() - 0.5) * 0.3;
+                    candleGroup.add(drip);
+                }
+                
+                // Candle top with melted edge
+                const topGeometry = new THREE.CylinderGeometry(0.09, 0.095, 0.05, 32);
+                const topMaterial = new THREE.MeshPhongMaterial({ 
+                    color: pos.color,
+                    shininess: 80
+                });
+                const top = new THREE.Mesh(topGeometry, topMaterial);
+                top.position.y = 3.03;
+                candleGroup.add(top);
+                
+                // Melted wax pool on top
+                const poolGeometry = new THREE.CylinderGeometry(0.07, 0.08, 0.02, 32);
+                const poolMaterial = new THREE.MeshPhongMaterial({ 
+                    color: pos.color,
+                    shininess: 100,
+                    specular: 0xaaaaaa,
+                    transparent: true,
+                    opacity: 0.9
+                });
+                const pool = new THREE.Mesh(poolGeometry, poolMaterial);
+                pool.position.y = 3.06;
+                candleGroup.add(pool);
+                
+                // Wick with detail
+                const wickGeometry = new THREE.CylinderGeometry(0.012, 0.008, 0.12, 12);
+                const wickMaterial = new THREE.MeshPhongMaterial({ 
+                    color: 0x2a2a2a,
+                    shininess: 5
+                });
+                const wick = new THREE.Mesh(wickGeometry, wickMaterial);
+                wick.position.y = 3.12;
+                candleGroup.add(wick);
+                
+                // Burnt wick tip
+                const wickTip = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.015, 12, 12),
+                    new THREE.MeshPhongMaterial({ 
+                        color: 0x1a1a1a,
+                        emissive: 0x331100,
+                        shininess: 1
+                    })
+                );
+                wickTip.position.y = 3.18;
+                candleGroup.add(wickTip);
+                
+                // Enhanced flame
+                const flame = createEnhancedFlame();
+                flame.position.y = 3.28;
+                candleGroup.add(flame);
+                flames.push(flame);
+                
+                candleGroup.position.set(pos.x, 0, pos.z);
+                candles.push(candleGroup);
+                cake.add(candleGroup);
+            });
+        }
+        
+        function createEnhancedFlame() {
+            const flameGroup = new THREE.Group();
+            
+            // Outer glow layer (largest)
+            const outerGlow1 = new THREE.Mesh(
+                new THREE.SphereGeometry(0.22, 16, 16),
+                new THREE.MeshBasicMaterial({
+                    color: 0xff4400,
+                    transparent: true,
+                    opacity: 0.15
+                })
+            );
+            outerGlow1.scale.set(1, 1.8, 1);
+            flameGroup.add(outerGlow1);
+            
+            // Mid glow layer
+            const outerGlow2 = new THREE.Mesh(
+                new THREE.SphereGeometry(0.18, 16, 16),
+                new THREE.MeshBasicMaterial({
+                    color: 0xff6600,
+                    transparent: true,
+                    opacity: 0.25
+                })
+            );
+            outerGlow2.scale.set(1, 1.7, 1);
+            flameGroup.add(outerGlow2);
+            
+            // Main flame body (orange-red)
+            const mainFlame = new THREE.Mesh(
+                new THREE.SphereGeometry(0.14, 16, 16),
+                new THREE.MeshBasicMaterial({
+                    color: 0xff8800,
+                    transparent: true,
+                    opacity: 0.7
+                })
+            );
+            mainFlame.scale.set(1, 1.6, 1);
+            flameGroup.add(mainFlame);
+            
+            // Inner flame (yellow-orange)
+            const innerFlame = new THREE.Mesh(
+                new THREE.SphereGeometry(0.1, 16, 16),
+                new THREE.MeshBasicMaterial({
+                    color: 0xffaa00,
+                    transparent: true,
+                    opacity: 0.85
+                })
+            );
+            innerFlame.scale.set(1, 1.5, 1);
+            flameGroup.add(innerFlame);
+            
+            // Core (bright yellow)
+            const core = new THREE.Mesh(
+                new THREE.SphereGeometry(0.06, 16, 16),
+                new THREE.MeshBasicMaterial({
+                    color: 0xffdd44,
+                    transparent: true,
+                    opacity: 0.95
+                })
+            );
+            core.scale.set(1, 1.4, 1);
+            core.position.y = -0.02;
+            flameGroup.add(core);
+            
+            // Hot spot (white center)
+            const hotSpot = new THREE.Mesh(
+                new THREE.SphereGeometry(0.03, 12, 12),
+                new THREE.MeshBasicMaterial({
+                    color: 0xffffee,
+                    transparent: true,
+                    opacity: 0.9
+                })
+            );
+            hotSpot.scale.set(1, 1.2, 1);
+            hotSpot.position.y = -0.03;
+            flameGroup.add(hotSpot);
+            
+            // Enhanced point light for flame
+            const flameLight = new THREE.PointLight(0xffaa00, 1.5, 4);
+            flameLight.castShadow = true;
+            flameGroup.add(flameLight);
+            
+            // Secondary warm light
+            const warmLight = new THREE.PointLight(0xff6600, 0.8, 2);
+            warmLight.position.y = 0.1;
+            flameGroup.add(warmLight);
+            
+            return flameGroup;
+        }
+        
+        function createSmoke(position) {
+            const smokeGeometry = new THREE.SphereGeometry(0.08, 8, 8);
+            const smokeMaterial = new THREE.MeshBasicMaterial({
+                color: 0x888888,
+                transparent: true,
+                opacity: 0.5
+            });
+            const smoke = new THREE.Mesh(smokeGeometry, smokeMaterial);
+            smoke.position.copy(position);
+            smoke.userData = {
+                velocity: new THREE.Vector3(
+                    (Math.random() - 0.5) * 0.02,
+                    0.03,
+                    (Math.random() - 0.5) * 0.02
+                ),
+                life: 1.0
+            };
+            scene.add(smoke);
+            smokeParticles.push(smoke);
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            const time = Date.now() * 0.001;
+            
+            // Rotate cake slowly
+            if (cake) {
+                cake.rotation.y = time * 0.15;
+            }
+            
+            // Enhanced flame animation
+            if (candlesLit && !isBlowing) {
+                flames.forEach((flame, i) => {
+                    const offset = i * 1.5;
+                    
+                    // Multiple sine waves for natural flicker
+                    const flicker1 = Math.sin(time * 15 + offset) * 0.08;
+                    const flicker2 = Math.sin(time * 22 + offset * 2) * 0.05;
+                    const flicker3 = Math.sin(time * 18 + offset * 1.5) * 0.06;
+                    
+                    flame.scale.y = 1 + flicker1 + flicker2;
+                    flame.scale.x = 1 + flicker3 * 0.5;
+                    flame.scale.z = 1 - flicker3 * 0.5;
+                    flame.position.y = 3.28 + (flicker1 + flicker2) * 0.1;
+                    
+                    // Rotate flame slightly for more realism
+                    flame.rotation.z = Math.sin(time * 8 + offset) * 0.1;
+                    
+                    // Animate each layer of the flame
+                    flame.children.forEach((layer, index) => {
+                        if (layer.material && layer.material.opacity !== undefined) {
+                            const baseOpacity = [0.15, 0.25, 0.7, 0.85, 0.95, 0.9][index] || 0.5;
+                            layer.material.opacity = baseOpacity + Math.sin(time * 20 + i * 2 + index) * 0.1;
+                        }
+                    });
+                });
+            }
+            
+            // Update smoke particles
+            smokeParticles.forEach((smoke, index) => {
+                smoke.position.add(smoke.userData.velocity);
+                smoke.userData.life -= 0.008;
+                smoke.material.opacity = smoke.userData.life * 0.5;
+                smoke.scale.multiplyScalar(1.015);
+                
+                // Add some drift
+                smoke.position.x += Math.sin(Date.now() * 0.002 + index) * 0.001;
+                
+                if (smoke.userData.life <= 0) {
+                    scene.remove(smoke);
+                    smokeParticles.splice(index, 1);
+                }
+            });
+            
+            renderer.render(scene, camera);
+        }
+        
+        function onWindowResize() {
+            const container = document.getElementById('cake-canvas').parentElement;
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        }
+        
+        // Game functions
+        function selectPreset(wish) {
+            document.getElementById('wishInput').value = wish;
+        }
+        
+        function confirmWish() {
+            const wish = document.getElementById('wishInput').value.trim();
+            if (!wish) return;
+            
+            currentWish = wish;
+            
+            // Switch UI
+            document.getElementById('wishInputSection').style.display = 'none';
+            document.getElementById('blowSection').style.display = 'block';
+            
+            // Show wish overlay
+            const overlay = document.getElementById('wishOverlay');
+            overlay.innerHTML = `<div class="wish-display cursive-body">${wish}</div>`;
+        }
+        
+        function blowCandles() {
+            if (!candlesLit || isBlowing) return;
+            
+            isBlowing = true;
+            document.getElementById('blowBtn').disabled = true;
+            document.getElementById('blowBtn').textContent = '✨ Blowing...';
+            
+            // Flame blow animation
+            let blowProgress = 0;
+            const blowInterval = setInterval(() => {
+                blowProgress += 0.05;
+                
+                flames.forEach(flame => {
+                    // Tilt and shrink flame
+                    flame.rotation.z = blowProgress * 0.8;
+                    flame.scale.x = 1 + blowProgress * 1.5;
+                    flame.scale.y = Math.max(0, 1 - blowProgress * 1.2);
+                    flame.children.forEach(child => {
+                        if (child.material) {
+                            child.material.opacity = Math.max(0, 1 - blowProgress);
+                        }
+                    });
+                });
+                
+                // Generate smoke
+                if (blowProgress > 0.3 && Math.random() > 0.7) {
+                    candles.forEach(candle => {
+                        const worldPos = new THREE.Vector3();
+                        candle.children[2].getWorldPosition(worldPos);
+                        createSmoke(worldPos);
+                    });
+                }
+                
+                if (blowProgress >= 1) {
+                    clearInterval(blowInterval);
+                    candlesLit = false;
+                    
+                    // Hide flames
+                    flames.forEach(flame => {
+                        flame.visible = false;
+                    });
+                    
+                    // Generate final smoke burst
+                    for (let i = 0; i < 10; i++) {
+                        setTimeout(() => {
+                            candles.forEach(candle => {
+                                const worldPos = new THREE.Vector3();
+                                candle.children[2].getWorldPosition(worldPos);
+                                createSmoke(worldPos);
+                            });
+                        }, i * 100);
+                    }
+                    
+                    // Fade out wish text
+                    setTimeout(() => {
+                        const wishDisplay = document.querySelector('.wish-display');
+                        if (wishDisplay) {
+                            wishDisplay.classList.add('fade-out');
+                        }
+                    }, 1000);
+                    
+                    // Show final message
+                    setTimeout(() => {
+                        const overlay = document.getElementById('wishOverlay');
+                        overlay.innerHTML = `<div class="final-message cursive-title">Your Wish Will Come True</div>`;
+                        
+                        document.getElementById('blowBtn').textContent = '✨ Wish Made!';
+                        isBlowing = false;
+                    }, 2500);
+                }
+            }, 30);
+        }
+        
+        function resetGame() {
+            // Reset state
+            candlesLit = true;
+            isBlowing = false;
+            currentWish = '';
+            
+            // Reset UI
+            document.getElementById('wishInput').value = '';
+            document.getElementById('wishInputSection').style.display = 'block';
+            document.getElementById('blowSection').style.display = 'none';
+            document.getElementById('wishOverlay').innerHTML = '';
+            document.getElementById('blowBtn').disabled = false;
+            document.getElementById('blowBtn').textContent = '🌬️ Blow Out Candles';
+            
+            // Reset flames
+            flames.forEach(flame => {
+                flame.visible = true;
+                flame.rotation.z = 0;
+                flame.scale.set(1, 1, 1);
+                flame.position.y = 3.2;
+                flame.children.forEach(child => {
+                    if (child.material) {
+                        child.material.opacity = child === flame.children[0] ? 0.3 : 
+                                                 child === flame.children[1] ? 0.8 : 0.9;
+                    }
+                });
+            });
+            
+            // Clear smoke
+            smokeParticles.forEach(smoke => scene.remove(smoke));
+            smokeParticles = [];
+        }
+        
+        // Scroll animations
+        function handleScroll() {
+            const container = document.getElementById('mainContainer');
+            const scrolled = container.scrollTop;
+            const height = container.scrollHeight - container.clientHeight;
+            const progress = scrolled / height;
+            
+            // Screen 1
+            const screen1 = document.getElementById('screen1');
+            const screen1Progress = Math.min(progress * 4, 1);
+            screen1.style.opacity = 0.3 + screen1Progress * 0.7;
+            screen1.style.transform = `scale(${1 + screen1Progress * 0.3})`;
+            
+            // Hide scroll indicator
+            const indicator = screen1.querySelector('.scroll-indicator');
+            if (indicator) {
+                indicator.style.opacity = 1 - screen1Progress;
+            }
+            
+            // Screen 2
+            const screen2Progress = Math.max(0, Math.min((progress - 0.25) * 4, 1));
+            const wishTexts = document.querySelectorAll('#screen2 .wish-text');
+            wishTexts.forEach((text, index) => {
+                const delay = parseFloat(text.dataset.delay);
+                const textProgress = Math.max(0, Math.min((screen2Progress - delay) * 2, 1));
+                text.style.opacity = textProgress;
+                text.style.transform = `translateY(${Math.max(0, 50 - textProgress * 100)}px)`;
+            });
+            
+            // Screen 3
+            const screen3Progress = Math.max(0, Math.min((progress - 0.5) * 4, 1));
+            document.getElementById('screen3').style.opacity = screen3Progress;
+            
+            // Screen 4
+            const screen4Progress = Math.max(0, Math.min((progress - 0.75) * 4, 1));
+            const screen4 = document.getElementById('screen4');
+            screen4.style.opacity = screen4Progress;
+            screen4.querySelector('div').style.transform = `translateY(${(1 - screen4Progress) * 50}px)`;
+            
+            // Speed up particles on scroll
+            const particles = document.querySelectorAll('.particle');
+            particles.forEach(particle => {
+                const currentDuration = parseFloat(getComputedStyle(particle).animationDuration);
+                if (scrolled > 0) {
+                    particle.style.animationDuration = (currentDuration * 0.5) + 's';
+                }
+            });
+        }
+        
+        // Keyboard support
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const input = document.getElementById('wishInput');
+                if (input && input === document.activeElement) {
+                    confirmWish();
+                }
+            }
+        });
+        
+        // Initialize
+        window.addEventListener('load', () => {
+            createParticles();
+            initThreeJS();
+            
+            const container = document.getElementById('mainContainer');
+            container.addEventListener('scroll', handleScroll);
+            
+            // Hide loading
+            setTimeout(() => {
+                document.getElementById('loading').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loading').style.display = 'none';
+                }, 500);
+            }, 1000);
+        });
+        
+        // Prevent zoom on double tap (mobile)
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', (e) => {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+    </script>
+</body>
+</html>
