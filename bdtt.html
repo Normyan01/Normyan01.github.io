@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="Interactive 3D Birthday Celebration">
-    <title>Happy Birthday Emma</title>
+    <title>Happy Birthday Alisia</title>
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Dancing+Script:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -62,6 +62,19 @@
             justify-content: center;
             position: relative;
             padding: 2rem;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        section.dim {
+            opacity: 0.3;
+            transition: opacity 0.6s ease-out;
         }
         
         /* Particle Background */
@@ -79,6 +92,20 @@
             position: absolute;
             border-radius: 50%;
             pointer-events: none;
+            will-change: transform, opacity;
+        }
+        
+        /* Enhanced particle types */
+        .particle-type-1 {
+            filter: blur(0px);
+        }
+        
+        .particle-type-2 {
+            filter: blur(1px);
+        }
+        
+        .particle-type-3 {
+            filter: blur(2px);
         }
         
         /* Typography */
@@ -159,6 +186,10 @@
             width: 100%;
             height: 600px;
             position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         }
         
         @media (max-width: 768px) {
@@ -167,9 +198,10 @@
             }
         }
         
-        #cake-canvas {
+        .cake-video {
             width: 100%;
             height: 100%;
+            object-fit: contain;
             border-radius: 1rem;
         }
         
@@ -507,9 +539,12 @@
                     </div>
                 </div>
                 
-                <!-- Center: 3D Cake -->
+                <!-- Center: Birthday Cake Video -->
                 <div class="canvas-container">
-                    <canvas id="cake-canvas"></canvas>
+                    <video id="cakeVideo" class="cake-video" muted playsinline preload="auto">
+                        <source src="burn.mp4" type="video/mp4">
+                        Your browser does not support video playback.
+                    </video>
                     <div class="wish-overlay" id="wishOverlay"></div>
                 </div>
                 
@@ -551,27 +586,86 @@
         </section>
     </div>
     
-    <!-- Three.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Three.js removed - using video instead -->
     
     <script>
         // Global variables
-        let scene, camera, renderer, cake, candles = [], flames = [], smokeParticles = [];
         let candlesLit = true;
         let currentWish = '';
         let isBlowing = false;
+        const cakeVideo = document.getElementById('cakeVideo');
         
-        // Particle system
+        // Video state management
+        const VIDEO_STATES = {
+            BURNING: 'burn.mp4',
+            BLOWING: 'blow.mp4',
+            REBURNING: 'reburn.mp4'
+        };
+        
+        let currentVideoState = VIDEO_STATES.BURNING;
+        
+        // Initialize video
+        function initVideo() {
+            // Set initial video to loop
+            cakeVideo.loop = true;
+            cakeVideo.play().catch(err => {
+                console.log('Video autoplay blocked, will play on user interaction');
+            });
+            
+            // Handle video events
+            cakeVideo.addEventListener('loadeddata', () => {
+                console.log('Video loaded successfully');
+            });
+            
+            cakeVideo.addEventListener('error', (e) => {
+                console.error('Video loading error:', e);
+                alert('Video files not found. Please ensure burn.mp4, blow.mp4, and reburn.mp4 are in the same directory as this HTML file.');
+            });
+        }
+        
+        // Switch video source
+        function switchVideo(videoSource, shouldLoop = false, onComplete = null) {
+            if (currentVideoState === videoSource && cakeVideo.src.includes(videoSource)) {
+                return; // Already playing this video
+            }
+            
+            currentVideoState = videoSource;
+            const currentTime = cakeVideo.currentTime;
+            
+            // Change source
+            cakeVideo.src = videoSource;
+            cakeVideo.loop = shouldLoop;
+            
+            // Play new video
+            cakeVideo.play().catch(err => console.error('Video play error:', err));
+            
+            // Handle completion
+            if (onComplete && !shouldLoop) {
+                cakeVideo.onended = () => {
+                    onComplete();
+                    cakeVideo.onended = null;
+                };
+            }
+        }
+        
+        // Enhanced Particle system with multiple types
         function createParticles() {
             const particleBg = document.getElementById('particleBg');
-            const particleCount = window.innerWidth < 768 ? 50 : 100;
+            const particleCount = window.innerWidth < 768 ? 80 : 150;
             
             for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'particle';
                 
-                const size = Math.random() * 3 + 1;
-                const colors = ['#ff6b9d', '#ffa500', '#00d2ff', '#a8ff78', '#f093fb'];
+                // Three types of particles for depth
+                const type = Math.floor(Math.random() * 3) + 1;
+                particle.classList.add(`particle-type-${type}`);
+                
+                const size = type === 1 ? Math.random() * 4 + 2 : 
+                            type === 2 ? Math.random() * 3 + 1.5 :
+                            Math.random() * 2 + 1;
+                
+                const colors = ['#ff6b9d', '#ffa500', '#00d2ff', '#a8ff78', '#f093fb', '#c44569', '#4facfe'];
                 const color = colors[Math.floor(Math.random() * colors.length)];
                 
                 particle.style.width = size + 'px';
@@ -579,32 +673,78 @@
                 particle.style.backgroundColor = color;
                 particle.style.left = Math.random() * 100 + '%';
                 particle.style.top = Math.random() * 100 + '%';
-                particle.style.opacity = Math.random() * 0.5 + 0.2;
-                particle.style.boxShadow = `0 0 ${size * 3}px ${color}`;
                 
-                const duration = 10 + Math.random() * 20;
-                const delay = Math.random() * 5;
+                const baseOpacity = type === 1 ? 0.6 : type === 2 ? 0.4 : 0.3;
+                particle.style.opacity = Math.random() * 0.3 + baseOpacity;
+                particle.style.boxShadow = `0 0 ${size * 4}px ${color}`;
+                
+                const duration = type === 1 ? 15 + Math.random() * 15 :
+                                type === 2 ? 20 + Math.random() * 20 :
+                                25 + Math.random() * 25;
+                const delay = Math.random() * 8;
+                
                 particle.style.animation = `particleFloat ${duration}s ease-in-out infinite`;
                 particle.style.animationDelay = `${delay}s`;
+                
+                // Store original duration for speed changes
+                particle.dataset.baseDuration = duration;
                 
                 particleBg.appendChild(particle);
             }
         }
         
-        // Add particle animation
+        // Enhanced particle animation with more movement
         const style = document.createElement('style');
         style.textContent = `
             @keyframes particleFloat {
-                0% { transform: translate(0, 0) rotate(0deg); opacity: 0.2; }
-                25% { transform: translate(30px, -30px) rotate(90deg); opacity: 0.6; }
-                50% { transform: translate(-15px, -60px) rotate(180deg); opacity: 0.4; }
-                75% { transform: translate(-30px, -30px) rotate(270deg); opacity: 0.7; }
-                100% { transform: translate(0, 0) rotate(360deg); opacity: 0.2; }
+                0% { 
+                    transform: translate(0, 0) rotate(0deg) scale(1);
+                    opacity: 0.3;
+                }
+                15% { 
+                    transform: translate(40px, -40px) rotate(60deg) scale(1.1);
+                    opacity: 0.7;
+                }
+                30% { 
+                    transform: translate(-20px, -80px) rotate(120deg) scale(0.9);
+                    opacity: 0.5;
+                }
+                45% { 
+                    transform: translate(-50px, -60px) rotate(200deg) scale(1.05);
+                    opacity: 0.8;
+                }
+                60% { 
+                    transform: translate(10px, -100px) rotate(260deg) scale(0.95);
+                    opacity: 0.4;
+                }
+                75% { 
+                    transform: translate(50px, -70px) rotate(320deg) scale(1.08);
+                    opacity: 0.75;
+                }
+                90% { 
+                    transform: translate(-10px, -30px) rotate(350deg) scale(1.02);
+                    opacity: 0.6;
+                }
+                100% { 
+                    transform: translate(0, 0) rotate(360deg) scale(1);
+                    opacity: 0.3;
+                }
             }
         `;
         document.head.appendChild(style);
         
-        // Init Three.js scene
+        // Video control functions
+        function playBurnVideo() {
+            switchVideo(VIDEO_STATES.BURNING, true);
+        }
+        
+        function playBlowVideo(onComplete) {
+            switchVideo(VIDEO_STATES.BLOWING, false, onComplete);
+        }
+        
+        function playReburnVideo(onComplete) {
+            switchVideo(VIDEO_STATES.REBURNING, false, onComplete);
+        }
         function initThreeJS() {
             const canvas = document.getElementById('cake-canvas');
             const container = canvas.parentElement;
@@ -1193,78 +1333,34 @@
             if (!candlesLit || isBlowing) return;
             
             isBlowing = true;
+            candlesLit = false;
             document.getElementById('blowBtn').disabled = true;
             document.getElementById('blowBtn').textContent = '✨ Blowing...';
             
-            // Flame blow animation
-            let blowProgress = 0;
-            const blowInterval = setInterval(() => {
-                blowProgress += 0.05;
-                
-                flames.forEach(flame => {
-                    // Tilt and shrink flame
-                    flame.rotation.z = blowProgress * 0.8;
-                    flame.scale.x = 1 + blowProgress * 1.5;
-                    flame.scale.y = Math.max(0, 1 - blowProgress * 1.2);
-                    flame.children.forEach(child => {
-                        if (child.material) {
-                            child.material.opacity = Math.max(0, 1 - blowProgress);
-                        }
-                    });
-                });
-                
-                // Generate smoke
-                if (blowProgress > 0.3 && Math.random() > 0.7) {
-                    candles.forEach(candle => {
-                        const worldPos = new THREE.Vector3();
-                        candle.children[2].getWorldPosition(worldPos);
-                        createSmoke(worldPos);
-                    });
-                }
-                
-                if (blowProgress >= 1) {
-                    clearInterval(blowInterval);
-                    candlesLit = false;
-                    
-                    // Hide flames
-                    flames.forEach(flame => {
-                        flame.visible = false;
-                    });
-                    
-                    // Generate final smoke burst
-                    for (let i = 0; i < 10; i++) {
-                        setTimeout(() => {
-                            candles.forEach(candle => {
-                                const worldPos = new THREE.Vector3();
-                                candle.children[2].getWorldPosition(worldPos);
-                                createSmoke(worldPos);
-                            });
-                        }, i * 100);
+            // Play blow video
+            playBlowVideo(() => {
+                // After blow video completes
+                setTimeout(() => {
+                    // Fade out wish text
+                    const wishDisplay = document.querySelector('.wish-display');
+                    if (wishDisplay) {
+                        wishDisplay.classList.add('fade-out');
                     }
                     
-                    // Fade out wish text
-                    setTimeout(() => {
-                        const wishDisplay = document.querySelector('.wish-display');
-                        if (wishDisplay) {
-                            wishDisplay.classList.add('fade-out');
-                        }
-                    }, 1000);
-                    
-                    // Show final message
+                    // Show final message after 1 second
                     setTimeout(() => {
                         const overlay = document.getElementById('wishOverlay');
                         overlay.innerHTML = `<div class="final-message cursive-title">Your Wish Will Come True</div>`;
                         
                         document.getElementById('blowBtn').textContent = '✨ Wish Made!';
                         isBlowing = false;
-                    }, 2500);
-                }
-            }, 30);
+                    }, 1000);
+                }, 500);
+            });
         }
         
         function resetGame() {
             // Reset state
-            candlesLit = true;
             isBlowing = false;
             currentWish = '';
             
@@ -1276,70 +1372,134 @@
             document.getElementById('blowBtn').disabled = false;
             document.getElementById('blowBtn').textContent = '🌬️ Blow Out Candles';
             
-            // Reset flames
-            flames.forEach(flame => {
-                flame.visible = true;
-                flame.rotation.z = 0;
-                flame.scale.set(1, 1, 1);
-                flame.position.y = 3.2;
-                flame.children.forEach(child => {
-                    if (child.material) {
-                        child.material.opacity = child === flame.children[0] ? 0.3 : 
-                                                 child === flame.children[1] ? 0.8 : 0.9;
-                    }
-                });
+            // Play reburn video then return to burn loop
+            playReburnVideo(() => {
+                candlesLit = true;
+                playBurnVideo();
             });
-            
-            // Clear smoke
-            smokeParticles.forEach(smoke => scene.remove(smoke));
-            smokeParticles = [];
         }
         
-        // Scroll animations
-        function handleScroll() {
-            const container = document.getElementById('mainContainer');
-            const scrolled = container.scrollTop;
-            const height = container.scrollHeight - container.clientHeight;
-            const progress = scrolled / height;
+        // Improved scroll animations with IntersectionObserver
+        function initScrollAnimations() {
+            const sections = document.querySelectorAll('section');
             
-            // Screen 1
-            const screen1 = document.getElementById('screen1');
-            const screen1Progress = Math.min(progress * 4, 1);
-            screen1.style.opacity = 0.3 + screen1Progress * 0.7;
-            screen1.style.transform = `scale(${1 + screen1Progress * 0.3})`;
+            // IntersectionObserver for precise visibility detection
+            const observerOptions = {
+                root: null,
+                rootMargin: '-20% 0px -20% 0px', // Trigger when section is 20% into viewport
+                threshold: [0, 0.2, 0.5, 0.8, 1.0]
+            };
             
-            // Hide scroll indicator
-            const indicator = screen1.querySelector('.scroll-indicator');
-            if (indicator) {
-                indicator.style.opacity = 1 - screen1Progress;
-            }
+            const sectionObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const section = entry.target;
+                    const ratio = entry.intersectionRatio;
+                    
+                    // Section is entering or in viewport
+                    if (entry.isIntersecting && ratio >= 0.2) {
+                        section.classList.add('visible');
+                        section.classList.remove('dim');
+                        section.style.opacity = Math.min(ratio * 1.5, 1);
+                    } 
+                    // Section is leaving viewport
+                    else if (!entry.isIntersecting || ratio < 0.2) {
+                        section.classList.remove('visible');
+                        section.classList.add('dim');
+                    }
+                });
+            }, observerOptions);
             
-            // Screen 2
-            const screen2Progress = Math.max(0, Math.min((progress - 0.25) * 4, 1));
-            const wishTexts = document.querySelectorAll('#screen2 .wish-text');
-            wishTexts.forEach((text, index) => {
-                const delay = parseFloat(text.dataset.delay);
-                const textProgress = Math.max(0, Math.min((screen2Progress - delay) * 2, 1));
-                text.style.opacity = textProgress;
-                text.style.transform = `translateY(${Math.max(0, 50 - textProgress * 100)}px)`;
+            sections.forEach(section => {
+                sectionObserver.observe(section);
             });
             
-            // Screen 3
-            const screen3Progress = Math.max(0, Math.min((progress - 0.5) * 4, 1));
-            document.getElementById('screen3').style.opacity = screen3Progress;
+            // Specific animations for each section
+            handleScreenAnimations();
+        }
+        
+        function handleScreenAnimations() {
+            const container = document.getElementById('mainContainer');
             
-            // Screen 4
-            const screen4Progress = Math.max(0, Math.min((progress - 0.75) * 4, 1));
-            const screen4 = document.getElementById('screen4');
-            screen4.style.opacity = screen4Progress;
-            screen4.querySelector('div').style.transform = `translateY(${(1 - screen4Progress) * 50}px)`;
+            container.addEventListener('scroll', () => {
+                const scrolled = container.scrollTop;
+                const viewportHeight = container.clientHeight;
+                
+                // Screen 1: Title scaling
+                const screen1 = document.getElementById('screen1');
+                const screen1Top = screen1.offsetTop;
+                const screen1Visible = (scrolled + viewportHeight > screen1Top) && (scrolled < screen1Top + screen1.clientHeight);
+                
+                if (screen1Visible) {
+                    const screen1Progress = Math.max(0, Math.min(1, (scrolled + viewportHeight - screen1Top) / viewportHeight));
+                    const titleContainer = screen1.querySelector('div');
+                    if (titleContainer) {
+                        titleContainer.style.transform = `scale(${1 + screen1Progress * 0.2})`;
+                    }
+                    
+                    // Hide scroll indicator
+                    const indicator = screen1.querySelector('.scroll-indicator');
+                    if (indicator) {
+                        indicator.style.opacity = Math.max(0, 1 - screen1Progress * 2);
+                    }
+                }
+                
+                // Screen 2: Wish texts fade in
+                const screen2 = document.getElementById('screen2');
+                const screen2Top = screen2.offsetTop;
+                const screen2Visible = (scrolled + viewportHeight > screen2Top) && (scrolled < screen2Top + screen2.clientHeight);
+                
+                if (screen2Visible) {
+                    const screen2Progress = (scrolled + viewportHeight - screen2Top) / viewportHeight;
+                    const wishTexts = screen2.querySelectorAll('.wish-text');
+                    
+                    wishTexts.forEach((text, index) => {
+                        const delay = parseFloat(text.dataset.delay);
+                        const adjustedProgress = Math.max(0, screen2Progress - delay);
+                        const textOpacity = Math.min(1, adjustedProgress * 2);
+                        const textTransform = Math.max(0, 50 - adjustedProgress * 100);
+                        
+                        text.style.opacity = textOpacity;
+                        text.style.transform = `translateY(${textTransform}px)`;
+                    });
+                }
+                
+                // Screen 4: Final message
+                const screen4 = document.getElementById('screen4');
+                const screen4Top = screen4.offsetTop;
+                const screen4Visible = (scrolled + viewportHeight > screen4Top);
+                
+                if (screen4Visible) {
+                    const screen4Progress = Math.min(1, (scrolled + viewportHeight - screen4Top) / viewportHeight);
+                    const content = screen4.querySelector('div');
+                    if (content) {
+                        content.style.transform = `translateY(${(1 - screen4Progress) * 50}px)`;
+                    }
+                }
+                
+                // Adjust particle speed based on scroll velocity
+                adjustParticleSpeed(scrolled);
+            });
+        }
+        
+        let lastScrollTop = 0;
+        let scrollVelocity = 0;
+        
+        function adjustParticleSpeed(currentScroll) {
+            scrollVelocity = Math.abs(currentScroll - lastScrollTop);
+            lastScrollTop = currentScroll;
             
-            // Speed up particles on scroll
             const particles = document.querySelectorAll('.particle');
             particles.forEach(particle => {
-                const currentDuration = parseFloat(getComputedStyle(particle).animationDuration);
-                if (scrolled > 0) {
-                    particle.style.animationDuration = (currentDuration * 0.5) + 's';
+                const baseDuration = parseFloat(particle.dataset.baseDuration);
+                
+                if (scrollVelocity > 5) {
+                    // Speed up when scrolling
+                    particle.style.animationDuration = (baseDuration * 0.4) + 's';
+                } else if (scrollVelocity > 2) {
+                    particle.style.animationDuration = (baseDuration * 0.7) + 's';
+                } else {
+                    // Return to normal speed
+                    particle.style.animationDuration = baseDuration + 's';
                 }
             });
         }
@@ -1358,9 +1518,7 @@
         window.addEventListener('load', () => {
             createParticles();
             initThreeJS();
-            
-            const container = document.getElementById('mainContainer');
-            container.addEventListener('scroll', handleScroll);
+            initScrollAnimations();
             
             // Hide loading
             setTimeout(() => {
