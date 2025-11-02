@@ -629,23 +629,56 @@
             
             if (!cakeVideo) {
                 console.error('Video element not found');
+                alert('Video element not found. Please check the HTML structure.');
                 return;
             }
             
+            console.log('Video element found, initializing...');
+            
             // Set initial video to loop
             cakeVideo.loop = true;
-            cakeVideo.play().catch(err => {
-                console.log('Video autoplay blocked, will play on user interaction');
-            });
+            
+            // Try to play
+            const playPromise = cakeVideo.play();
+            
+            if (playPromise !== undefined) {
+                playPromise
+                    .then(() => {
+                        console.log('Video playing successfully');
+                    })
+                    .catch(err => {
+                        console.log('Video autoplay blocked:', err);
+                        console.log('Video will play on user interaction');
+                        
+                        // Try to play on first user interaction
+                        const playOnInteraction = () => {
+                            cakeVideo.play().catch(e => console.error('Play error:', e));
+                            document.removeEventListener('click', playOnInteraction);
+                            document.removeEventListener('touchstart', playOnInteraction);
+                        };
+                        
+                        document.addEventListener('click', playOnInteraction);
+                        document.addEventListener('touchstart', playOnInteraction);
+                    });
+            }
             
             // Handle video events
             cakeVideo.addEventListener('loadeddata', () => {
                 console.log('Video loaded successfully');
             });
             
+            cakeVideo.addEventListener('loadedmetadata', () => {
+                console.log('Video metadata loaded');
+            });
+            
             cakeVideo.addEventListener('error', (e) => {
                 console.error('Video loading error:', e);
-                alert('Video files not found. Please ensure burn.mp4, blow.mp4, and reburn.mp4 are in the same directory as this HTML file.');
+                const errorMsg = 'Video files not found.\n\nPlease ensure these files are in the same directory:\n- burn.mp4\n- blow.mp4\n- reburn.mp4';
+                alert(errorMsg);
+            });
+            
+            cakeVideo.addEventListener('canplay', () => {
+                console.log('Video can play');
             });
         }
         
@@ -681,6 +714,14 @@
         // Enhanced Particle system with multiple types
         function createParticles() {
             const particleBg = document.getElementById('particleBg');
+            
+            if (!particleBg) {
+                console.error('Particle background element not found');
+                return;
+            }
+            
+            console.log('Creating particles...');
+            
             const particleCount = window.innerWidth < 768 ? 80 : 150;
             
             for (let i = 0; i < particleCount; i++) {
@@ -721,6 +762,8 @@
                 
                 particleBg.appendChild(particle);
             }
+            
+            console.log(`Created ${particleCount} particles`);
         }
         
         // Enhanced particle animation with more movement
@@ -1592,31 +1635,51 @@
         
         // Game functions
         function selectPreset(wish) {
-            document.getElementById('wishInput').value = wish;
+            const input = document.getElementById('wishInput');
+            if (input) {
+                input.value = wish;
+            }
         }
         
         function confirmWish() {
-            const wish = document.getElementById('wishInput').value.trim();
-            if (!wish) return;
+            const input = document.getElementById('wishInput');
+            if (!input) {
+                console.error('Wish input not found');
+                return;
+            }
+            
+            const wish = input.value.trim();
+            if (!wish) {
+                alert('Please enter a wish first!');
+                return;
+            }
             
             currentWish = wish;
             
             // Switch UI
-            document.getElementById('wishInputSection').style.display = 'none';
-            document.getElementById('blowSection').style.display = 'block';
+            const wishSection = document.getElementById('wishInputSection');
+            const blowSection = document.getElementById('blowSection');
+            
+            if (wishSection) wishSection.style.display = 'none';
+            if (blowSection) blowSection.style.display = 'block';
             
             // Show wish overlay
             const overlay = document.getElementById('wishOverlay');
-            overlay.innerHTML = `<div class="wish-display cursive-body">${wish}</div>`;
+            if (overlay) {
+                overlay.innerHTML = `<div class="wish-display cursive-body">${wish}</div>`;
+            }
         }
         
         function blowCandles() {
             if (!candlesLit || isBlowing) return;
             
+            const blowBtn = document.getElementById('blowBtn');
+            if (!blowBtn) return;
+            
             isBlowing = true;
             candlesLit = false;
-            document.getElementById('blowBtn').disabled = true;
-            document.getElementById('blowBtn').textContent = '✨ Blowing...';
+            blowBtn.disabled = true;
+            blowBtn.textContent = '✨ Blowing...';
             
             // Play blow video
             playBlowVideo(() => {
@@ -1631,9 +1694,13 @@
                     // Show final message after 1 second
                     setTimeout(() => {
                         const overlay = document.getElementById('wishOverlay');
-                        overlay.innerHTML = `<div class="final-message cursive-title">Your Wish Will Come True</div>`;
+                        if (overlay) {
+                            overlay.innerHTML = `<div class="final-message cursive-title">Your Wish Will Come True</div>`;
+                        }
                         
-                        document.getElementById('blowBtn').textContent = '✨ Wish Made!';
+                        if (blowBtn) {
+                            blowBtn.textContent = '✨ Wish Made!';
+                        }
                         isBlowing = false;
                     }, 1000);
                 }, 500);
@@ -1645,13 +1712,21 @@
             isBlowing = false;
             currentWish = '';
             
+            const wishInput = document.getElementById('wishInput');
+            const wishSection = document.getElementById('wishInputSection');
+            const blowSection = document.getElementById('blowSection');
+            const wishOverlay = document.getElementById('wishOverlay');
+            const blowBtn = document.getElementById('blowBtn');
+            
             // Reset UI
-            document.getElementById('wishInput').value = '';
-            document.getElementById('wishInputSection').style.display = 'block';
-            document.getElementById('blowSection').style.display = 'none';
-            document.getElementById('wishOverlay').innerHTML = '';
-            document.getElementById('blowBtn').disabled = false;
-            document.getElementById('blowBtn').textContent = '🌬️ Blow Out Candles';
+            if (wishInput) wishInput.value = '';
+            if (wishSection) wishSection.style.display = 'block';
+            if (blowSection) blowSection.style.display = 'none';
+            if (wishOverlay) wishOverlay.innerHTML = '';
+            if (blowBtn) {
+                blowBtn.disabled = false;
+                blowBtn.textContent = '🌬️ Blow Out Candles';
+            }
             
             // Play reburn video then return to burn loop
             playReburnVideo(() => {
